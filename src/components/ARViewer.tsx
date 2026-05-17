@@ -1,6 +1,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
+import { Maximize2, Minimize2, Camera, X, Plus, Minus, RotateCcw, Smartphone } from 'lucide-react';
 
 // Extend JSX namespace for model-viewer
 declare module 'react' {
@@ -29,6 +30,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [orbit, setOrbit] = useState("0deg 75deg 105%");
   const [hasMotionPermission, setHasMotionPermission] = useState(false);
+  const initialAlphaRef = useRef<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const stopCamera = () => {
@@ -112,6 +114,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
     if (magicMirrorActive) {
       stopCamera();
       setMagicMirrorActive(false);
+      initialAlphaRef.current = null;
     } else {
       startMagicMirror();
     }
@@ -137,30 +140,28 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
 
   useEffect(() => {
     if (!magicMirrorActive || !hasMotionPermission) {
+      initialAlphaRef.current = null;
       return;
     }
-
-    let initialAlpha: number | null = null;
 
     const handleOrientation = (e: DeviceOrientationEvent) => {
       if (e.beta === null || e.gamma === null || e.alpha === null) return;
       
-      if (initialAlpha === null) {
-        initialAlpha = e.alpha;
+      if (initialAlphaRef.current === null) {
+        initialAlphaRef.current = e.alpha;
       }
 
-      // Beta is tilt forward/back (-180 to 180). Normal holding is ~45-90.
-      // Gamma is tilt left/right (-90 to 90).
-      // Alpha is rotation around z-axis (compass-like).
+      // Calculate relative rotation (sideways movement)
+      let diffAlpha = e.alpha - initialAlphaRef.current;
+      // Handle 360 degree wrap around
+      if (diffAlpha > 180) diffAlpha -= 360;
+      if (diffAlpha < -180) diffAlpha += 360;
+
+      // Theta (Azimuth): Combining pure rotation (alpha) and slight tilt (gamma)
+      // This makes the object feel anchored as you rotate the phone around it
+      const theta = diffAlpha - (e.gamma * 0.4); 
       
-      // We want to stabilize the dish relative to the horizon.
-      // Phi (polar angle) should respond to beta.
-      // Theta (azimuth angle) should respond to gamma and alpha.
-      
-      // Normalized theta based on gamma (tilt left/right)
-      const theta = -e.gamma; 
-      
-      // Normalized phi based on beta (tilt up/down)
+      // Phi (Polar): Tilt up/down
       // When holding device upright (beta ~90), we want phi ~90deg (side view)
       // When holding device flat (beta ~0), we want phi ~0deg (top view)
       const phi = e.beta; 
@@ -174,7 +175,6 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
     window.addEventListener('deviceorientation', handleOrientation);
     return () => {
       window.removeEventListener('deviceorientation', handleOrientation);
-      initialAlpha = null;
     };
   }, [magicMirrorActive, hasMotionPermission]);
 
@@ -273,7 +273,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
           <div className="flex items-start justify-between gap-4">
             <span className="flex-1 leading-relaxed">{cameraError}</span>
             <button onClick={() => setMagicMirrorActive(false)} className="opacity-60 hover:opacity-100 transition-opacity p-1">
-              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              <X size={16} />
             </button>
           </div>
           
@@ -398,8 +398,9 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
       <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-30">
         <button 
           onClick={toggleExpand}
-          className={`px-3 py-1.5 rounded-full border border-aura-dark/5 transition-all backdrop-blur-sm ${isExpanded ? 'bg-aura-gold text-white' : 'bg-white/80 hover:bg-white text-aura-dark/60'}`}
+          className={`px-3 py-1.5 rounded-full border border-aura-dark/5 transition-all backdrop-blur-sm flex items-center gap-2 ${isExpanded ? 'bg-aura-gold text-white' : 'bg-white/80 hover:bg-white text-aura-dark/60'}`}
         >
+          {isExpanded ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
           <span className="text-[10px] font-bold uppercase tracking-widest">
             {isExpanded ? 'Exit Full Screen' : 'View Full Screen'}
           </span>
@@ -409,6 +410,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
           onClick={toggleMagicMirror}
           className={`px-3 py-1.5 rounded-full border border-aura-dark/5 transition-all flex items-center gap-2 backdrop-blur-sm ${magicMirrorActive ? 'bg-aura-gold text-white border-aura-gold' : 'bg-white/80 hover:bg-white text-aura-dark/60'}`}
         >
+          {magicMirrorActive ? <Camera size={12} /> : <Smartphone size={12} />}
           <div className={`w-1.5 h-1.5 rounded-full ${magicMirrorActive ? 'bg-white animate-pulse' : 'bg-aura-dark/20'}`} />
           <span className="text-[10px] font-bold uppercase tracking-widest">
             {magicMirrorActive ? 'Exit Lite AR' : 'Lite AR (Camera)'}
@@ -424,26 +426,52 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         </button>
       </div>
 
-      {/* Scale Control Slider */}
-      <div className="absolute left-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 z-40 opacity-0 group-hover:opacity-100 transition-opacity">
-        <div className="flex flex-col items-center bg-white/20 backdrop-blur-md p-3 rounded-2xl border border-white/20">
-          <span className="text-[8px] font-black text-white/60 uppercase tracking-tighter mb-4 [writing-mode:vertical-lr] rotate-180">Scale Object</span>
-          <div className="relative h-32 w-6 flex items-center justify-center">
+      {/* Scale Control UI */}
+      <div className="absolute left-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 z-40 opacity-0 group-hover:opacity-100 transition-all duration-500 scale-90 sm:scale-100">
+        <div className="flex flex-col items-center bg-black/40 backdrop-blur-xl p-4 rounded-3xl border border-white/10 shadow-2xl">
+          <button 
+            onClick={() => setScale(prev => Math.min(3, prev + 0.2))}
+            className="w-10 h-10 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-90"
+          >
+            <Plus size={20} strokeWidth={3} />
+          </button>
+          
+          <div className="relative h-40 w-12 flex items-center justify-center my-2">
+            <div className="absolute inset-y-0 w-1 bg-white/10 rounded-full" />
             <input 
               type="range" 
               min="0.2" 
               max="3" 
-              step="0.1" 
+              step="0.05" 
               value={scale} 
               onChange={(e) => setScale(parseFloat(e.target.value))}
-              className="absolute w-32 h-1 bg-white/20 rounded-full appearance-none cursor-pointer rotate-270 accent-aura-gold"
+              className="absolute w-40 h-12 bg-transparent appearance-none cursor-pointer rotate-270 accent-aura-gold z-10 touch-none"
               style={{
                 WebkitAppearance: 'none',
-                background: 'rgba(255,255,255,0.1)'
               }}
             />
           </div>
-          <span className="text-[10px] font-bold text-white mt-4">{Math.round(scale * 100)}%</span>
+
+          <button 
+            onClick={() => setScale(prev => Math.max(0.2, prev - 0.2))}
+            className="w-10 h-10 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-90"
+          >
+            <Minus size={20} strokeWidth={3} />
+          </button>
+
+          <div className="mt-4 flex flex-col items-center border-t border-white/5 pt-4 w-full">
+            <span className="text-[12px] font-black text-white">{Math.round(scale * 100)}%</span>
+            <button 
+              onClick={() => {
+                setScale(1);
+                initialAlphaRef.current = null;
+              }}
+              className="flex flex-col items-center gap-1 text-[8px] font-bold text-aura-gold uppercase tracking-[0.2em] mt-2 opacity-60 hover:opacity-100 transition-all"
+            >
+              <RotateCcw size={10} />
+              Reset
+            </button>
+          </div>
         </div>
       </div>
 
