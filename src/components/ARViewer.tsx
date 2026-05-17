@@ -27,6 +27,8 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [scale, setScale] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [orbit, setOrbit] = useState("0deg 75deg 105%");
+  const [hasMotionPermission, setHasMotionPermission] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const stopCamera = () => {
@@ -44,6 +46,18 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
       
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error("Camera API not supported in this browser.");
+      }
+
+      // Request motion permission for iOS
+      if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+        try {
+          const state = await (DeviceOrientationEvent as any).requestPermission();
+          setHasMotionPermission(state === 'granted');
+        } catch (e) {
+          console.warn("Motion permission denied:", e);
+        }
+      } else {
+        setHasMotionPermission(true);
       }
 
       let stream;
@@ -122,6 +136,49 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   }, [isExpanded]);
 
   useEffect(() => {
+    if (!magicMirrorActive || !hasMotionPermission) {
+      return;
+    }
+
+    let initialAlpha: number | null = null;
+
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      if (e.beta === null || e.gamma === null || e.alpha === null) return;
+      
+      if (initialAlpha === null) {
+        initialAlpha = e.alpha;
+      }
+
+      // Beta is tilt forward/back (-180 to 180). Normal holding is ~45-90.
+      // Gamma is tilt left/right (-90 to 90).
+      // Alpha is rotation around z-axis (compass-like).
+      
+      // We want to stabilize the dish relative to the horizon.
+      // Phi (polar angle) should respond to beta.
+      // Theta (azimuth angle) should respond to gamma and alpha.
+      
+      // Normalized theta based on gamma (tilt left/right)
+      const theta = -e.gamma; 
+      
+      // Normalized phi based on beta (tilt up/down)
+      // When holding device upright (beta ~90), we want phi ~90deg (side view)
+      // When holding device flat (beta ~0), we want phi ~0deg (top view)
+      const phi = e.beta; 
+      
+      // Limit phi to avoid flipping
+      const safePhi = Math.max(10, Math.min(170, phi));
+      
+      setOrbit(`${theta}deg ${safePhi}deg 105%`);
+    };
+
+    window.addEventListener('deviceorientation', handleOrientation);
+    return () => {
+      window.removeEventListener('deviceorientation', handleOrientation);
+      initialAlpha = null;
+    };
+  }, [magicMirrorActive, hasMotionPermission]);
+
+  useEffect(() => {
     return () => stopCamera();
   }, []);
 
@@ -195,7 +252,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   };
 
   return (
-    <div className={`relative w-full rounded-3xl overflow-hidden backdrop-blur-md border border-white/20 shadow-inner group transition-all duration-500 ${magicMirrorActive ? 'bg-black' : 'bg-neutral-100/50'} ${isExpanded ? 'fixed inset-4 z-[100] h-auto' : 'h-[350px] md:h-[500px]'}`}>
+    <div className={`relative w-full rounded-3xl overflow-hidden backdrop-blur-md border border-white/20 shadow-inner group transition-all duration-500 ${magicMirrorActive ? 'bg-black' : 'bg-neutral-100/50'} ${isExpanded ? 'fixed inset-0 z-[100] rounded-none h-full w-full' : 'h-[350px] md:h-[500px]'}`}>
       {/* Magic Mirror Video Background */}
       <video
         ref={videoRef}
@@ -316,12 +373,13 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         poster={poster}
         alt={alt}
         camera-controls
-        auto-rotate
+        auto-rotate={!magicMirrorActive}
         auto-rotate-delay="0"
         shadow-intensity="1.5"
         exposure="0.8"
         shadow-softness="0.8"
         scale={`${scale} ${scale} ${scale}`}
+        camera-orbit={magicMirrorActive ? orbit : undefined}
         loading="eager"
         interaction-prompt="auto"
         interpolation-decay="200"
