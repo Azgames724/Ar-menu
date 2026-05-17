@@ -25,6 +25,8 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   const [showRetry, setShowRetry] = useState(false);
   const [magicMirrorActive, setMagicMirrorActive] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [scale, setScale] = useState(1);
+  const [isExpanded, setIsExpanded] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const stopCamera = () => {
@@ -101,6 +103,24 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
     }
   };
 
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+    if (!isExpanded) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    if (isExpanded) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isExpanded]);
+
   useEffect(() => {
     return () => stopCamera();
   }, []);
@@ -175,7 +195,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   };
 
   return (
-    <div className={`relative w-full h-[350px] md:h-[500px] rounded-3xl overflow-hidden backdrop-blur-md border border-white/20 shadow-inner group transition-colors duration-500 ${magicMirrorActive ? 'bg-black' : 'bg-neutral-100/50'}`}>
+    <div className={`relative w-full rounded-3xl overflow-hidden backdrop-blur-md border border-white/20 shadow-inner group transition-all duration-500 ${magicMirrorActive ? 'bg-black' : 'bg-neutral-100/50'} ${isExpanded ? 'fixed inset-4 z-[100] h-auto' : 'h-[350px] md:h-[500px]'}`}>
       {/* Magic Mirror Video Background */}
       <video
         ref={videoRef}
@@ -301,6 +321,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         shadow-intensity="1.5"
         exposure="0.8"
         shadow-softness="0.8"
+        scale={`${scale} ${scale} ${scale}`}
         loading="eager"
         interaction-prompt="auto"
         interpolation-decay="200"
@@ -318,6 +339,15 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
 
       <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-30">
         <button 
+          onClick={toggleExpand}
+          className={`px-3 py-1.5 rounded-full border border-aura-dark/5 transition-all backdrop-blur-sm ${isExpanded ? 'bg-aura-gold text-white' : 'bg-white/80 hover:bg-white text-aura-dark/60'}`}
+        >
+          <span className="text-[10px] font-bold uppercase tracking-widest">
+            {isExpanded ? 'Exit Full Screen' : 'View Full Screen'}
+          </span>
+        </button>
+
+        <button 
           onClick={toggleMagicMirror}
           className={`px-3 py-1.5 rounded-full border border-aura-dark/5 transition-all flex items-center gap-2 backdrop-blur-sm ${magicMirrorActive ? 'bg-aura-gold text-white border-aura-gold' : 'bg-white/80 hover:bg-white text-aura-dark/60'}`}
         >
@@ -332,8 +362,31 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
           onClick={enterFullscreen}
           className="bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-aura-dark/5 hover:bg-white transition-colors"
         >
-          <span className="text-[10px] font-bold uppercase tracking-widest text-aura-dark/60">3D Fullscreen</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-aura-dark/60">Native Fullscreen</span>
         </button>
+      </div>
+
+      {/* Scale Control Slider */}
+      <div className="absolute left-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 z-40 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex flex-col items-center bg-white/20 backdrop-blur-md p-3 rounded-2xl border border-white/20">
+          <span className="text-[8px] font-black text-white/60 uppercase tracking-tighter mb-4 [writing-mode:vertical-lr] rotate-180">Scale Object</span>
+          <div className="relative h-32 w-6 flex items-center justify-center">
+            <input 
+              type="range" 
+              min="0.2" 
+              max="3" 
+              step="0.1" 
+              value={scale} 
+              onChange={(e) => setScale(parseFloat(e.target.value))}
+              className="absolute w-32 h-1 bg-white/20 rounded-full appearance-none cursor-pointer rotate-270 accent-aura-gold"
+              style={{
+                WebkitAppearance: 'none',
+                background: 'rgba(255,255,255,0.1)'
+              }}
+            />
+          </div>
+          <span className="text-[10px] font-bold text-white mt-4">{Math.round(scale * 100)}%</span>
+        </div>
       </div>
 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 w-full px-6 flex flex-col items-center gap-3">
