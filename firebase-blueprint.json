@@ -1,0 +1,59 @@
+{
+  "entities": {
+    "Dish": {
+      "title": "Dish",
+      "description": "A food item with a 3D model",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        },
+        "ingredients": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "allergens": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "calories": {
+          "type": "number"
+        },
+        "modelUrl": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["Appetizer", "Main", "Dessert", "Drink"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "authorId": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "price", "description", "ingredients", "allergens", "calories", "modelUrl", "imageUrl", "category", "createdAt", "updatedAt", "authorId"]
+    }
+  },
+  "firestore": {
+    "dishes": {
+      "schema": "Dish",
+      "description": "Collection of available dishes"
+    }
+  }
+}

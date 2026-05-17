@@ -1,0 +1,83 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helper Functions ---
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isEmailVerified() && (
+        request.auth.token.email == 'abeniship13@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Dish Validation ---
+
+    function isValidDish(data) {
+      return data.keys().hasAll(['name', 'price', 'description', 'ingredients', 'allergens', 'calories', 'modelUrl', 'imageUrl', 'category', 'createdAt', 'updatedAt', 'authorId']) &&
+             data.keys().size() == 12 &&
+             data.name is string && data.name.size() >= 1 && data.name.size() <= 100 &&
+             data.price is number && data.price >= 0 &&
+             data.description is string && data.description.size() <= 1000 &&
+             data.ingredients is list && data.ingredients.size() <= 50 &&
+             data.allergens is list && data.allergens.size() <= 20 &&
+             data.calories is number && data.calories >= 0 &&
+             data.modelUrl is string && data.modelUrl.size() <= 1000 &&
+             data.imageUrl is string && data.imageUrl.size() <= 1000 &&
+             data.category in ['Appetizer', 'Main', 'Dessert', 'Drink'] &&
+             data.authorId == request.auth.uid &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    // --- Collection Routes ---
+
+    match /dishes/{dishId} {
+      allow read: if true; // Public menu
+      
+      allow create: if isAdmin() && 
+                      isValidId(dishId) && 
+                      isValidDish(incoming()) && 
+                      incoming().createdAt == request.time &&
+                      incoming().updatedAt == request.time;
+      
+      allow update: if isAdmin() && 
+                      isValidDish(incoming()) && 
+                      incoming().updatedAt == request.time &&
+                      incoming().createdAt == existing().createdAt &&
+                      incoming().authorId == existing().authorId;
+      
+      allow delete: if isAdmin();
+    }
+
+    match /admins/{adminId} {
+      allow read: if isAdmin();
+      allow write: if false; // Only manageable via console
+    }
+  }
+}

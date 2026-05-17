@@ -1,19 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, ArrowLeft, Info, Wind, InfoIcon } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Wind, InfoIcon, Settings } from 'lucide-react';
 import { MENU_DATA, MenuItem } from './data/menu';
 import ARViewer from './components/ARViewer';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import Admin from './pages/Admin';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db, handleFirestoreError, OperationType } from './lib/firebase';
 
-export default function App() {
+function MenuHome() {
   const [hasStarted, setHasStarted] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [firestoreDishes, setFirestoreDishes] = useState<MenuItem[]>([]);
 
   const categories = ['All', 'Appetizer', 'Main', 'Dessert', 'Drink'];
   
+  useEffect(() => {
+    const q = query(collection(db, 'dishes'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const dishes = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as MenuItem[];
+      setFirestoreDishes(dishes);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'dishes');
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Merge hardcoded data with firestore data, prefer firestore
+  const allDishes = firestoreDishes.length > 0 ? firestoreDishes : MENU_DATA;
+
   const filteredMenu = activeCategory === 'All' 
-    ? MENU_DATA 
-    : MENU_DATA.filter(item => item.category === activeCategory);
+    ? allDishes 
+    : allDishes.filter(item => item.category === activeCategory);
 
   if (!hasStarted) {
     return (
@@ -52,9 +75,13 @@ export default function App() {
           </div>
         </motion.div>
 
-        <div className="absolute bottom-12 flex flex-col items-center gap-2 opacity-20 capitalize">
-          <span className="text-[10px] tracking-widest">San Francisco • London • Tokyo</span>
-        </div>
+        <Link 
+          to="/admin" 
+          className="absolute bottom-12 group flex items-center gap-3 bg-white/5 px-6 py-3 rounded-full hover:bg-white/10 transition-all border border-white/5 active:scale-95"
+        >
+          <Settings size={18} className="text-white/20 group-hover:text-aura-gold transition-colors" />
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 group-hover:text-white transition-colors">Admin Terminal</span>
+        </Link>
       </div>
     );
   }
@@ -62,7 +89,7 @@ export default function App() {
   return (
     <div className="min-h-screen max-w-md mx-auto relative overflow-hidden flex flex-col">
       {/* Header */}
-      <header className="p-8 pt-12 text-center">
+      <header className="p-8 pt-12 text-center relative">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -78,6 +105,9 @@ export default function App() {
         >
           AR Menu Experience
         </motion.p>
+        <Link to="/admin" className="absolute top-12 right-6 opacity-20 hover:opacity-100 transition-opacity">
+          <Settings size={16} />
+        </Link>
       </header>
 
       {/* Category Tabs */}
@@ -204,7 +234,7 @@ export default function App() {
                       <span className="text-[10px] uppercase tracking-wider font-bold">Allergens</span>
                     </div>
                     <div className="flex flex-wrap gap-1">
-                      {selectedItem.allergens.length > 0 ? (
+                      {(selectedItem.allergens || []).length > 0 ? (
                         selectedItem.allergens.map(a => (
                           <span key={a} className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-sm font-medium">
                             {a}
@@ -217,23 +247,36 @@ export default function App() {
                   </div>
                 </div>
 
-                <div>
-                  <h4 className="text-[10px] uppercase tracking-[0.2em] font-bold opacity-40 mb-3 flex items-center gap-2">
-                    Ingredients
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedItem.ingredients.map(ing => (
-                      <span key={ing} className="border border-aura-dark/10 px-3 py-1.5 rounded-full text-xs text-aura-dark/70">
-                        {ing}
-                      </span>
-                    ))}
+                {selectedItem.ingredients && selectedItem.ingredients.length > 0 && (
+                  <div>
+                    <h4 className="text-[10px] uppercase tracking-[0.2em] font-bold opacity-40 mb-3 flex items-center gap-2">
+                      Ingredients
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedItem.ingredients.map(ing => (
+                        <span key={ing} className="border border-aura-dark/10 px-3 py-1.5 rounded-full text-xs text-aura-dark/70">
+                          {ing}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MenuHome />} />
+        <Route path="/admin" element={<Admin />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
