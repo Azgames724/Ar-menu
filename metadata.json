@@ -1,0 +1,6 @@
+{
+  "name": "Aura AR Menu",
+  "description": "An immersive AR dining experience. Scan, choose, and visualize your meal in 3D on your table before ordering.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
