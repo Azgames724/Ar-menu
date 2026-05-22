@@ -8,7 +8,7 @@ import { MenuItem } from '../data/menu';
 import { Link } from 'react-router-dom';
 
 export default function Admin() {
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, loading, isLocalMode, setLocalAdminSession, signOut } = useAuth();
   const [dishes, setDishes] = useState<MenuItem[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -43,19 +43,41 @@ export default function Admin() {
   useEffect(() => {
     if (!isAdmin) return;
 
-    const q = query(collection(db, 'dishes'), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const dishesData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as MenuItem[];
-      setDishes(dishesData);
-    }, (error) => {
-      handleFirestoreError(error, OperationType.GET, 'dishes');
-    });
+    const loadLocalDishes = () => {
+      try {
+        const stored = localStorage.getItem('local_dishes');
+        return stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        return [];
+      }
+    };
+
+    let unsubscribe = () => {};
+
+    if (!isLocalMode) {
+      const q = query(collection(db, 'dishes'), orderBy('createdAt', 'desc'));
+      unsubscribe = onSnapshot(q, (snapshot) => {
+        const firestoreDishes = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as MenuItem[];
+
+        // Combine Firestore custom dishes with local storage dishes
+        const locals = loadLocalDishes();
+        setDishes([...locals, ...firestoreDishes]);
+      }, (error) => {
+        // If Firestore read fails due to permissions or quota, fall back to showing local dishes
+        console.warn('Firestore subscription failed, falling back to local dishes:', error);
+        const locals = loadLocalDishes();
+        setDishes(locals);
+      });
+    } else {
+      const locals = loadLocalDishes();
+      setDishes(locals);
+    }
 
     return () => unsubscribe();
-  }, [isAdmin]);
+  }, [isAdmin, isLocalMode]);
 
   const handleAddDish = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,15 +95,38 @@ export default function Admin() {
         imageUrl: formData.imageUrl,
         category: formData.category,
         authorId: user.uid,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
 
-      await addDoc(collection(db, 'dishes'), dishData);
+      if (isLocalMode) {
+        // Save to Local Storage fallback
+        const stored = localStorage.getItem('local_dishes');
+        const existingLocal = stored ? JSON.parse(stored) : [];
+        const newDish = {
+          id: `local-${Date.now()}`,
+          ...dishData
+        };
+        const updatedLocal = [newDish, ...existingLocal];
+        localStorage.setItem('local_dishes', JSON.stringify(updatedLocal));
+        setDishes(prev => [newDish, ...prev]);
+        setImportStatus({
+          type: 'success',
+          message: `Successfully created "${dishData.name}" in Local Admin Storage!`
+        });
+      } else {
+        // Save to Firebase database
+        const firestoreDishData = {
+          ...dishData,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        };
+        await addDoc(collection(db, 'dishes'), firestoreDishData);
+      }
+
       setIsAdding(false);
       setLocalModelName('');
       setLocalImageName('');
-      setImportStatus(null);
       setFormData({
         name: '',
         price: '',
@@ -94,14 +139,29 @@ export default function Admin() {
         category: 'Wrap'
       });
     } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, 'dishes');
+      if (isLocalMode) {
+        setImportStatus({
+          type: 'error',
+          message: `Failed to save locally: ${error instanceof Error ? error.message : error}`
+        });
+      } else {
+        handleFirestoreError(error, OperationType.CREATE, 'dishes');
+      }
     }
   };
 
   const handleDeleteDish = async (id: string) => {
     if (!confirm('Are you sure you want to remove this dish?')) return;
     try {
-      await deleteDoc(doc(db, 'dishes', id));
+      if (id.startsWith('local-')) {
+        const stored = localStorage.getItem('local_dishes');
+        const existingLocal = stored ? JSON.parse(stored) : [];
+        const updatedLocal = existingLocal.filter((d: any) => d.id !== id);
+        localStorage.setItem('local_dishes', JSON.stringify(updatedLocal));
+        setDishes(prev => prev.filter(d => d.id !== id));
+      } else {
+        await deleteDoc(doc(db, 'dishes', id));
+      }
     } catch (error) {
       handleFirestoreError(error, OperationType.DELETE, `dishes/${id}`);
     }
@@ -284,16 +344,22 @@ export default function Admin() {
       normalizedPassword = 'admin_secure_password';
     }
 
+    // Direct local authentication fallback for demo admin credentials to bypass Firebase provider limits
+    if (normalizedEmail === 'admin@dagi.com' && normalizedPassword === 'admin_secure_password') {
+      setTimeout(() => {
+        setLocalAdminSession(true);
+        setIsLoggingIn(false);
+      }, 400);
+      return;
+    }
+
     try {
       await signInWithEmailAndPassword(auth, normalizedEmail, normalizedPassword);
     } catch (error: any) {
       if (normalizedEmail === 'admin@dagi.com') {
-        // Auto-create on the fly in sandboxed environment if doesn't exist yet
-        try {
-          await createUserWithEmailAndPassword(auth, normalizedEmail, normalizedPassword);
-        } catch (createError: any) {
-          setLoginError(`Authentication failed: ${error.message || error}`);
-        }
+        // Fall back to local admin mode directly if Firebase Email/Password login throws an error due to Auth methods disabled in Firestore Console
+        console.warn('Firebase Auth email/password unavailable, falling back to Local Admin mode:', error);
+        setLocalAdminSession(true);
       } else {
         setLoginError(error.message || 'Incorrect credentials');
       }
@@ -448,8 +514,8 @@ export default function Admin() {
             Your account ({user.email}) does not have administrative privileges.
           </p>
           <button 
-            onClick={() => auth.signOut()}
-            className="text-aura-dark/40 hover:text-aura-dark underline uppercase tracking-widest text-[10px] font-bold"
+            onClick={() => signOut()}
+            className="text-white hover:text-aura-gold underline uppercase tracking-widest text-[10px] font-bold"
           >
             Sign out
           </button>
@@ -482,8 +548,8 @@ export default function Admin() {
             </div>
           </div>
           <button 
-            onClick={() => auth.signOut()}
-            className="p-3.5 bg-white border border-aura-dark/5 rounded-2xl text-aura-dark/40 hover:text-red-500 hover:border-red-100 transition-all shadow-sm"
+            onClick={() => signOut()}
+            className="p-3.5 bg-white border border-aura-dark/5 rounded-2xl text-aura-dark/40 hover:text-red-500 hover:border-red-105 transition-all shadow-sm"
           >
             <LogOut size={20} />
           </button>

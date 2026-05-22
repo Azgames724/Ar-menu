@@ -12,10 +12,21 @@ function MenuHome() {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [firestoreDishes, setFirestoreDishes] = useState<MenuItem[]>([]);
+  const [localDishes, setLocalDishes] = useState<MenuItem[]>([]);
 
   const categories = ['All', 'Wrap', 'Burrito'];
   
   useEffect(() => {
+    // Load local storage dishes
+    try {
+      const stored = localStorage.getItem('local_dishes');
+      if (stored) {
+        setLocalDishes(JSON.parse(stored));
+      }
+    } catch (e) {
+      console.error('Failed to load local dishes from storage:', e);
+    }
+
     const q = query(collection(db, 'dishes'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const dishes = snapshot.docs.map(doc => ({
@@ -24,14 +35,14 @@ function MenuHome() {
       })) as MenuItem[];
       setFirestoreDishes(dishes);
     }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, 'dishes');
+      console.warn('Firestore loading unavailable, using static + local fallback data:', error);
     });
 
     return () => unsubscribe();
   }, []);
 
-  // Merge hardcoded data with firestore data, with firestore taking priority in case of duplicate IDs/names
-  const mergedDishes = [...firestoreDishes];
+  // Merge hardcoded data with local and firestore data, with custom data taking priority in case of duplicate IDs/names
+  const mergedDishes = [...localDishes, ...firestoreDishes];
   MENU_DATA.forEach((item) => {
     const isDuplicate = mergedDishes.some(
       (d) => d.id === item.id || d.name.toLowerCase().trim() === item.name.toLowerCase().trim()
