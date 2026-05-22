@@ -1,6 +1,6 @@
 {
-  "name": "Aura AR Menu",
-  "description": "An immersive AR dining experience. Scan, choose, and visualize your meal in 3D on your table before ordering.",
+  "name": "Dagi Fast Food",
+  "description": "An immersive 3D fast food menu experience for Dagi Fast Food. View delicious gourmet wraps, burritos, and refreshing drinks before ordering.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

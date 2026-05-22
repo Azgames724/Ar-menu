@@ -9,12 +9,11 @@ import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from './lib/firebase';
 
 function MenuHome() {
-  const [hasStarted, setHasStarted] = useState(false);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [firestoreDishes, setFirestoreDishes] = useState<MenuItem[]>([]);
 
-  const categories = ['All', 'Appetizer', 'Main', 'Dessert', 'Drink'];
+  const categories = ['All', 'Wrap', 'Burrito'];
   
   useEffect(() => {
     const q = query(collection(db, 'dishes'), orderBy('createdAt', 'desc'));
@@ -31,60 +30,32 @@ function MenuHome() {
     return () => unsubscribe();
   }, []);
 
-  // Merge hardcoded data with firestore data, prefer firestore
-  const allDishes = firestoreDishes.length > 0 ? firestoreDishes : MENU_DATA;
+  // Merge hardcoded data with firestore data, with firestore taking priority in case of duplicate IDs/names
+  const mergedDishes = [...firestoreDishes];
+  MENU_DATA.forEach((item) => {
+    const isDuplicate = mergedDishes.some(
+      (d) => d.id === item.id || d.name.toLowerCase().trim() === item.name.toLowerCase().trim()
+    );
+    if (!isDuplicate) {
+      mergedDishes.push(item);
+    }
+  });
+
+  // Self-healing: automatically map any legacy/broken glTF-Sample-Models URLs to the new active glTF-Sample-Assets repo at runtime
+  const allDishes = mergedDishes.map((item) => {
+    let modelUrl = item.modelUrl || '';
+    if (modelUrl.includes('glTF-Sample-Models/master/2.0/')) {
+      modelUrl = modelUrl.replace(
+        'glTF-Sample-Models/master/2.0/',
+        'glTF-Sample-Assets/main/Models/'
+      );
+    }
+    return { ...item, modelUrl };
+  });
 
   const filteredMenu = activeCategory === 'All' 
     ? allDishes 
     : allDishes.filter(item => item.category === activeCategory);
-
-  if (!hasStarted) {
-    return (
-      <div className="min-h-screen max-w-md mx-auto bg-aura-dark text-white flex flex-col items-center justify-center p-8 text-center relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-aura-gold rounded-full blur-[100px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-aura-gold rounded-full blur-[100px]" />
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="z-10"
-        >
-          <div className="mb-12">
-            <h1 className="serif text-6xl tracking-[0.2em] uppercase mb-4">Aura</h1>
-            <p className="text-xs uppercase tracking-[0.4em] text-aura-gold font-medium">Fine Dining Reimagined</p>
-          </div>
-
-          <div className="space-y-8">
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-aura-gold/20 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
-              <button 
-                onClick={() => setHasStarted(true)}
-                className="relative bg-white text-aura-dark px-12 py-5 rounded-2xl font-bold uppercase tracking-widest text-sm shadow-2xl hover:scale-105 active:scale-95 transition-all"
-              >
-                Scan Table QR
-              </button>
-            </div>
-            
-            <p className="text-[10px] text-white/30 uppercase tracking-[0.2em]">
-              Scan the code on your table to <br /> visualize your meal in AR
-            </p>
-          </div>
-        </motion.div>
-
-        <Link 
-          to="/admin" 
-          className="absolute bottom-12 group flex items-center gap-3 bg-white/5 px-6 py-3 rounded-full hover:bg-white/10 transition-all border border-white/5 active:scale-95"
-        >
-          <Settings size={18} className="text-white/20 group-hover:text-aura-gold transition-colors" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 group-hover:text-white transition-colors">Admin Terminal</span>
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen max-w-md mx-auto relative overflow-hidden flex flex-col">
@@ -93,9 +64,9 @@ function MenuHome() {
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="serif text-4xl tracking-widest uppercase mb-2"
+          className="serif text-4xl tracking-widest uppercase mb-2 font-black text-aura-dark"
         >
-          Aura
+          Dagi
         </motion.h1>
         <motion.p 
           initial={{ opacity: 0 }}
@@ -103,10 +74,15 @@ function MenuHome() {
           transition={{ delay: 0.2 }}
           className="text-xs uppercase tracking-[0.3em] font-medium"
         >
-          AR Menu Experience
+          Fast Food 3D Showcase
         </motion.p>
-        <Link to="/admin" className="absolute top-12 right-6 opacity-20 hover:opacity-100 transition-opacity">
-          <Settings size={16} />
+        <Link 
+          to="/admin" 
+          className="absolute top-12 right-6 bg-white border border-aura-dark/15 text-aura-dark hover:bg-aura-dark hover:text-white transition-all px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-sm active:scale-95"
+          title="Admin Settings Portal"
+        >
+          <Settings size={12} className="opacity-80 transition-transform duration-500 group-hover:rotate-45" />
+          <span>Admin Portal</span>
         </Link>
       </header>
 
@@ -169,6 +145,17 @@ function MenuHome() {
               </div>
             </motion.div>
           ))}
+          
+          <div className="pt-8 pb-12 text-center flex flex-col items-center gap-2 border-t border-aura-dark/5 mt-12">
+            <p className="text-[10px] text-aura-dark/30 uppercase tracking-[0.2em] font-medium">Fast Food Reimagined</p>
+            <Link 
+              to="/admin" 
+              className="text-[10px] text-aura-gold hover:text-aura-dark font-black uppercase tracking-[0.25em] flex items-center gap-1.5 transition-colors"
+            >
+              <Settings size={12} />
+              <span>Enter Admin Dashboard</span>
+            </Link>
+          </div>
         </motion.div>
       </main>
 
@@ -192,8 +179,8 @@ function MenuHome() {
                 <ArrowLeft size={20} />
               </button>
               <div className="text-center">
-                <h2 className="serif text-xl uppercase tracking-widest leading-none">Aura Gastronomy</h2>
-                <span className="text-[10px] uppercase tracking-[0.2em] opacity-40">Detail View</span>
+                <h2 className="serif text-xl uppercase tracking-widest leading-none font-bold text-aura-dark">Dagi Fast Food</h2>
+                <span className="text-[10px] uppercase tracking-[0.2em] opacity-40">Fast Food 3D Showcase</span>
               </div>
               <div className="w-10" /> {/* Spacer for balance */}
             </div>
