@@ -105,7 +105,7 @@ function MenuHome() {
   });
   const [newReview, setNewReview] = useState({ name: '', comment: '', rating: 5, dishId: '' });
 
-  const categories = ['All', 'Wrap', 'Burrito'];
+  const categories = ['All', 'FastFood', 'main dish'];
 
   useEffect(() => {
     localStorage.setItem('dagi_customer_reviews', JSON.stringify(reviews));
