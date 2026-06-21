@@ -28,60 +28,29 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isLocalMode, setIsLocalMode] = useState(() => {
-    return localStorage.getItem('local_admin_session') === 'true';
+  const [user, setUser] = useState<any | null>({
+    uid: 'local-admin',
+    email: 'admin@dagi.com',
+    displayName: 'Dagi Creator',
+    photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop',
   });
+  const [loading, setLoading] = useState(false);
+  const [isLocalMode, setIsLocalMode] = useState(true);
 
   const setLocalAdminSession = (active: boolean) => {
-    if (active) {
-      localStorage.setItem('local_admin_session', 'true');
-      setIsLocalMode(true);
-      setUser({
-        uid: 'local-admin',
-        email: 'admin@dagi.com',
-        displayName: 'Dagi Admin',
-        photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop',
-      });
-    } else {
-      localStorage.removeItem('local_admin_session');
-      setIsLocalMode(false);
-      setUser(auth.currentUser);
-    }
+    // Keep as local admin
   };
 
   const signOut = async () => {
-    if (isLocalMode) {
-      setLocalAdminSession(false);
-    } else {
-      await firebaseSignOut(auth);
-    }
+    // No authentication restrictions, do not sign out
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (fbUser) => {
-      if (isLocalMode) {
-        setUser({
-          uid: 'local-admin',
-          email: 'admin@dagi.com',
-          displayName: 'Dagi Admin',
-          photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop',
-        });
-      } else {
-        setUser(fbUser);
-      }
-      setLoading(false);
-    });
+    // Authenticated state is stable
+  }, []);
 
-    return () => unsubscribe();
-  }, [isLocalMode]);
-
-  // Simple admin check for administrative privileges
-  const isAdmin = isLocalMode || 
-                  user?.email === 'abeniship13@gmail.com' || 
-                  user?.email === 'admin@aura.com' ||
-                  user?.email === 'admin@dagi.com';
+  // Admin access is permanently available
+  const isAdmin = true;
 
   return (
     <AuthContext.Provider value={{ user, loading, isAdmin, isLocalMode, setLocalAdminSession, signOut }}>

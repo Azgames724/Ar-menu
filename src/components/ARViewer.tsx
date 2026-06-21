@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { Maximize2, Minimize2, Plus, Minus, RotateCcw } from 'lucide-react';
+import { Maximize2, Minimize2, Plus, Minus, RotateCcw, Sparkles } from 'lucide-react';
 
 // Extend JSX namespace for model-viewer
 declare module 'react' {
@@ -25,6 +25,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   const [showRetry, setShowRetry] = useState(false);
   const [scale, setScale] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [arSupported, setArSupported] = useState(false);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -78,6 +79,11 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
       const handleLoad = () => {
         setIsLoaded(true);
         setError(false);
+        if (viewer.canActivateAR) {
+          setArSupported(true);
+        } else {
+          setArSupported(false);
+        }
       };
       const handleError = () => {
         setError(true);
@@ -95,10 +101,17 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
       viewer.addEventListener('error', handleError);
       viewer.addEventListener('progress', handleProgress);
       
+      const arTimer = setTimeout(() => {
+        if (viewer.canActivateAR) {
+          setArSupported(true);
+        }
+      }, 1000);
+      
       return () => {
         viewer.removeEventListener('load', handleLoad);
         viewer.removeEventListener('error', handleError);
         viewer.removeEventListener('progress', handleProgress);
+        clearTimeout(arTimer);
       };
     }
   }, [src]);
@@ -188,6 +201,9 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         id="aura-3d-model"
         ref={viewerRef}
         src={src}
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        ar-scale="auto"
         provide-id
         poster={poster}
         alt={alt}
@@ -281,12 +297,30 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         </div>
       </div>
 
+      {/* Conditionally render custom "Launch AR Experience" button if browser/device supports AR */}
+      {arSupported && (
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-40 flex justify-center w-full px-6 pointer-events-auto">
+          <button
+            type="button"
+            onClick={() => {
+              if (viewerRef.current) {
+                viewerRef.current.activateAR();
+              }
+            }}
+            className="bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white font-black text-[11px] uppercase tracking-wider px-7 py-3 rounded-full shadow-2xl flex items-center gap-2 border border-white/20 transition-all active:scale-95 animate-pulse cursor-pointer"
+          >
+            <Sparkles size={13} fill="currentColor" />
+            <span>Launch AR Experience</span>
+          </button>
+        </div>
+      )}
+
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 w-full px-6 flex flex-col items-center gap-2 pointer-events-none">
         <div className="bg-black/40 backdrop-blur-md text-white px-8 py-3 rounded-full font-bold shadow-xl border border-white/10 uppercase text-[10px] tracking-[0.15em]">
-          Interactive 3D Dish Showcase
+          {arSupported ? 'Interactive 3D + AR Dish Showcase' : 'Interactive 3D Dish Showcase'}
         </div>
-        <span className="text-[9px] text-aura-dark/40 uppercase tracking-[0.2em] font-medium font-sans">
-          Drag to rotate • Pinch to zoom
+        <span className="text-[9px] text-neutral-400 capitalize bg-black/20 backdrop-blur-sm px-3 py-1 rounded-md font-semibold font-sans tracking-wide">
+          {arSupported ? 'AR supported • Drag to rotate 3D' : 'Drag to rotate • Pinch to zoom'}
         </span>
       </div>
     </div>

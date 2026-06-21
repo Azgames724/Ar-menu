@@ -21,6 +21,38 @@ if (!fs.existsSync(uploadsDir)) {
 }
 app.use('/uploads', express.static(uploadsDir));
 
+// File List endpoint to scan uploads folder and return models and images
+app.get('/api/list-files', (req, res) => {
+  try {
+    if (!fs.existsSync(uploadsDir)) {
+      return res.json({ models: [], images: [] });
+    }
+    
+    const files = fs.readdirSync(uploadsDir);
+    const models: Array<{ name: string; url: string }> = [];
+    const images: Array<{ name: string; url: string }> = [];
+    
+    files.forEach(file => {
+      const ext = path.extname(file).toLowerCase();
+      const item = {
+        name: file,
+        url: `/uploads/${file}`
+      };
+      
+      if (['.glb', '.gltf'].includes(ext)) {
+        models.push(item);
+      } else if (['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) {
+        images.push(item);
+      }
+    });
+    
+    res.json({ models, images });
+  } catch (error: any) {
+    console.error('Failed to list files:', error);
+    res.status(500).json({ error: error.message || 'Error listing folder files' });
+  }
+});
+
 // File Upload endpoint
 app.post('/api/upload', (req, res) => {
   try {

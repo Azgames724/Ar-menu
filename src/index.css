@@ -1,21 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Cormorant Garamond", serif;
-  --font-sans: "Inter", sans-serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-heading: "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
   
-  --color-aura-gold: #D4AF37;
-  --color-aura-dark: #121212;
-  --color-aura-paper: #FDFCF8;
+  --color-brand-orange: #EA580C;
+  --color-brand-amber: #F59E0B;
+  --color-brand-black: #1E1B18;
+  --color-brand-paper: #FAF8F5;
+
+  --color-aura-gold: #EA580C;
+  --color-aura-dark: #1E1B18;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-aura-paper);
-  color: var(--color-aura-dark);
+  background-color: var(--color-brand-black);
+  color: var(--color-brand-black);
+  overflow-x: hidden;
 }
 
-.serif {
-  font-family: var(--font-serif);
+/* Custom scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+

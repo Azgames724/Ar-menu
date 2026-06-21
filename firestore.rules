@@ -49,7 +49,7 @@ service cloud.firestore {
              data.calories is number && data.calories >= 0 &&
              data.modelUrl is string && data.modelUrl.size() <= 1000 &&
              data.imageUrl is string && data.imageUrl.size() <= 1000 &&
-             data.category in ['Appetizer', 'Main', 'Dessert', 'Drink'] &&
+             data.category in ['Appetizer', 'Main', 'Dessert', 'Drink', 'Wrap', 'Burrito'] &&
              data.authorId == request.auth.uid &&
              data.createdAt is timestamp &&
              data.updatedAt is timestamp;
