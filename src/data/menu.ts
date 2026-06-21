@@ -60,4 +60,24 @@ export const MENU_DATA: MenuItem[] = [
     imageUrl: 'https://images.unsplash.com/photo-1626379616459-b2ce1d9decbc?auto=format&fit=crop&w=800&q=80',
     category: 'Burrito'
   }
+  /*
+  ========================================================================
+  LOCAL 'QHOM' ASSETS TEMPLATE EXAMPLE (Uncomment & Customize!):
+  Place your custom images (e.g., ertibb.png) and 3D models (e.g., ertib.glb or ertib.obj)
+  inside your newly created /public/qhom/ folder, then reference them as shown below:
+  ========================================================================
+  ,
+  {
+    id: 'ff-qhom-example',
+    name: 'Dagi Custom Qhom Meal • የቤትዎ ልዩ ምግብ',
+    price: 15.00,
+    description: 'ልዩ የቤትዎ ምግብ: This model and picture are served directly from your local /public/qhom/ folder! Change the files inside "qhom" in your workspace to instantly update the visual interface.',
+    ingredients: ['Custom Ingredients', 'Local Sourced Veggies', 'Chef Secret Blend'],
+    allergens: [],
+    calories: 450,
+    modelUrl: '/qhom/ertib.glb', // Put your 3D GLB model in /public/qhom/ertib.glb
+    imageUrl: '/qhom/ertibb.png', // Put your photo in /public/qhom/ertibb.png
+    category: 'Wrap'
+  }
+  */
 ];

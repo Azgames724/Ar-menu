@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowLeft, Wind, InfoIcon, Search, Home, MessageSquare, 
   Sparkles, Star, Copy, Check, Menu, UtensilsCrossed, X,
-  MapPin, ExternalLink
+  MapPin, ExternalLink, Trophy, Flame, Timer, Award
 } from 'lucide-react';
 import { MENU_DATA, MenuItem } from './data/menu';
 import ARViewer from './components/ARViewer';
@@ -37,6 +37,24 @@ function MenuHome() {
   const [arSimulatedRotation, setArSimulatedRotation] = useState(45);
   const [arSimulatedDishId, setArSimulatedDishId] = useState('ff-2');
   const [arAutoSpin, setArAutoSpin] = useState(true);
+
+  // Food Challenge Simulator state
+  const [showChallengePanel, setShowChallengePanel] = useState(false);
+  const [challengeActive, setChallengeActive] = useState(false);
+  const [challengeProgress, setChallengeProgress] = useState(0); // grams eaten out of 3000
+  const [challengeFullness, setChallengeFullness] = useState(0); // stomach capacity 0-100%
+  const [challengeTimeLeft, setChallengeTimeLeft] = useState(900); // 15 mins = 900 seconds
+  const [challengeStatus, setChallengeStatus] = useState<'idle' | 'playing' | 'won' | 'lost'>('idle');
+  const [challengeChampions, setChallengeChampions] = useState<{name: string, time: string, date: string}[]>(() => {
+    const stored = localStorage.getItem('dagi_challenge_champions');
+    if (stored) return JSON.parse(stored);
+    return [
+      { name: 'Abenezer G.', time: '11:24', date: 'June 12, 2026' },
+      { name: 'Robel S.', time: '13:40', date: 'June 18, 2026' },
+      { name: 'Bruk T.', time: '14:15', date: 'June 20, 2026' }
+    ];
+  });
+  const [championNameInput, setChampionNameInput] = useState('');
 
   // Social/review state
   const [reviews, setReviews] = useState<UserReview[]>(() => {
@@ -92,6 +110,30 @@ function MenuHome() {
   useEffect(() => {
     localStorage.setItem('dagi_customer_reviews', JSON.stringify(reviews));
   }, [reviews]);
+
+  useEffect(() => {
+    localStorage.setItem('dagi_challenge_champions', JSON.stringify(challengeChampions));
+  }, [challengeChampions]);
+
+  useEffect(() => {
+    if (!challengeActive || challengeStatus !== 'playing') return;
+
+    const timer = setInterval(() => {
+      setChallengeTimeLeft(prev => {
+        if (prev <= 1) {
+          setChallengeStatus('lost');
+          setChallengeActive(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+
+      // Digesting food slowly: stomach fullness drops by 4% per second
+      setChallengeFullness(prev => Math.max(0, prev - 4));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [challengeActive, challengeStatus]);
 
   useEffect(() => {
     if (!arAutoSpin) return;
@@ -496,7 +538,7 @@ function MenuHome() {
                           {/* Controls Row */}
                           <div className="bg-white/10 p-3 rounded-2xl border border-white/15 space-y-2.5">
                             {/* Scale Slider */}
-                            <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center justify-between gap-3 font-sans">
                               <span className="text-[8px] font-extrabold uppercase tracking-wider text-white/90 w-16">
                                 Scale Meal:
                               </span>
@@ -518,7 +560,7 @@ function MenuHome() {
                             </div>
 
                             {/* Rotation Slider */}
-                            <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center justify-between gap-3 font-sans">
                               <span className="text-[8px] font-extrabold uppercase tracking-wider text-white/90 w-16">
                                 Spin Orbit:
                               </span>
@@ -540,11 +582,11 @@ function MenuHome() {
                             </div>
 
                             {/* Toggle Row */}
-                            <div className="flex justify-between items-center pt-1 border-t border-white/10">
-                              <span className="text-[7.5px] text-white/70 font-bold uppercase tracking-wider">
+                            <div className="flex justify-between items-center pt-1 border-t border-white/10 font-sans">
+                              <span className="text-[7.5px] text-white/70 font-bold uppercase tracking-wider font-sans">
                                 Click plate directly to lock position
                               </span>
-                              <label className="flex items-center gap-1.5 cursor-pointer">
+                              <label className="flex items-center gap-1.5 cursor-pointer font-sans">
                                 <input
                                   type="checkbox"
                                   checked={arAutoSpin}
