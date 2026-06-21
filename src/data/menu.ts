@@ -15,7 +15,7 @@ export const MENU_DATA: MenuItem[] = [
   {
     id: 'ff-1',
     name: 'Dagi Normal Burrito • ቡሪቶ',
-    price: 8.50,
+    price: 210.00,
     description: 'ቡሪቶ: A warm, soft flour tortilla wrapped with fresh garden greens, sliced ripe tomatoes, crisp cucumbers, hand-smashed Haas avocado, and a smooth zesty garlic herb dressing. (Examine the 3D model of our fresh organic avocado ingredients!)',
     ingredients: ['Flour Tortilla', 'Garden Greens', 'Haas Avocado', 'Sliced Tomatoes', 'Garlic Herb Dressing'],
     allergens: ['Gluten'],
@@ -27,7 +27,7 @@ export const MENU_DATA: MenuItem[] = [
   {
     id: 'ff-2',
     name: 'Dagi Special Burrito • ልዩ ቡሪቶ',
-    price: 12.00,
+    price: 300.00,
     description: 'ልዩ ዋፕ: Premium crispy hand-battered golden cod fish filet wrapped in a warm spinach tortilla with double melted Swiss cheese, fresh dill tartar cream, and shredded organic cabbage. (Preview our pristine 3D aquatic catch fish model!)',
     ingredients: ['Crispy Cod Filet', 'Spinach Tortilla', 'Double Swiss Cheese', 'Organic Cabbage', 'Dill Tartar Cream'],
     allergens: ['Fish', 'Gluten', 'Dairy'],
@@ -39,7 +39,7 @@ export const MENU_DATA: MenuItem[] = [
   {
     id: 'ff-3',
     name: 'Pasta • ፓስታ',
-    price: 9.50,
+    price: 100.00,
     description: 'መደበኛ ቡሪቶ: A classic toasted flour tortilla stuffed with seasoned warm yellow rice, savory black beans, fresh sweet corn, and mild melted Cheddar cheese. Served with a premium 3D insulated canteen! (Preview the sleek 3D water container model below!)',
     ingredients: ['Flour Tortilla', 'Seasoned Yellow Rice', 'Savory Black Beans', 'Sweet Corn', 'Melted Cheddar'],
     allergens: ['Gluten', 'Dairy'],
