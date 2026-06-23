@@ -53,7 +53,7 @@ export const MENU_DATA: MenuItem[] = [
     calories: 450,
     modelUrl: "/qhom/ertib.glb",
     imageUrl: "/qhom/pasta.jpg",
-    category: '',
+    category: 'main dish',
     amharicCategory: ''
   }
 ];
