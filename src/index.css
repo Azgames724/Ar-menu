@@ -11,9 +11,9 @@
 @font-face {
   font-family: 'EthiopicCustom';
   src: /* 1. EDIT THIS LINE TO USE YOUR OWN UPLOADED FONT: */
-       url('/fonts/custom.ttf') format('truetype'),
-       url('/fonts/custom.woff2') format('woff2'),
-       url('/fonts/custom.woff') format('woff'),
+       url('/fonts/Hiwua.ttf') format('truetype'),
+       url('/fonts/Tesfa.TTF') format('truetype'),
+       url('/fonts/Wukiyanos.ttf') format('truetype'),
        
        /* Fallbacks for system compatibility */
        url('/qhom/fonts/custom.woff2') format('woff2'),
