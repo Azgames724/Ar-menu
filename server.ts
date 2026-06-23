@@ -88,7 +88,13 @@ async function startServer() {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+      // If the request has an extension or is an API/upload/qhom resource, don't serve index.html
+      const ext = path.extname(req.path);
+      if (ext || req.path.startsWith('/api/') || req.path.startsWith('/qhom/') || req.path.startsWith('/uploads/')) {
+        res.status(404).send('Not Found');
+      } else {
+        res.sendFile(path.join(distPath, 'index.html'));
+      }
     });
   }
 

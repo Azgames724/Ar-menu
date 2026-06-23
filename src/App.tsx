@@ -211,7 +211,20 @@ function MenuHome() {
   // Helper to detect if item is vegetarian
   const isVegDish = (name: string) => {
     const norm = name.toLowerCase();
-    return norm.includes('avocado') || norm.includes('normal burrito') || norm.includes('veg');
+    return norm.includes('avocado') || norm.includes('normal burrito') || norm.includes('veg') || norm.includes('pasta');
+  };
+
+  // Helper to handle loading error for local images gracefully
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, imageUrl: string) => {
+    e.currentTarget.onerror = null; // prevent infinite loops
+    const lower = imageUrl.toLowerCase();
+    if (lower.includes('pasta') || lower.includes('spaghetti')) {
+      e.currentTarget.src = 'https://images.unsplash.com/photo-1574484284002-982dac98677c?auto=format&fit=crop&w=800&q=80';
+    } else if (lower.includes('special') || lower.includes('cod')) {
+      e.currentTarget.src = 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80';
+    } else {
+      e.currentTarget.src = 'https://images.unsplash.com/photo-1626379616459-b2ce1d9decbc?auto=format&fit=crop&w=800&q=80';
+    }
   };
 
   // Post a new customer review
@@ -250,46 +263,52 @@ function MenuHome() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 flex justify-center items-center py-0 sm:py-4 font-sans antialiased text-brand-black selection:bg-orange-200">
+    <div className="min-h-screen bg-[#F9C52E] flex justify-center items-center py-0 sm:py-8 font-sans antialiased text-brand-black selection:bg-orange-200">
       
       {/* Devourin-Inspired Mobile Phone Container Frame */}
-      <div className="relative w-full h-[100dvh] sm:max-w-[420px] sm:h-[min(830px,88vh)] bg-[#FAF8F5] sm:rounded-[3rem] sm:shadow-2xl sm:border-[12px] sm:border-neutral-900 overflow-hidden flex flex-col">
+      <div className="relative w-full h-[100dvh] sm:max-w-[420px] sm:h-[880px] bg-[#FAF8F5] sm:rounded-[3.5rem] sm:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.4)] sm:border-[14px] sm:border-neutral-900 overflow-hidden flex flex-col">
         
         {/* Phone Sensor Notch emulation */}
         <div className="hidden sm:block absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-neutral-900 rounded-b-xl z-50">
           <div className="w-12 h-1.5 bg-neutral-800 mx-auto mt-1.5 rounded-full" />
         </div>
 
-        {/* Brand Theme Header with Rounded elements */}
-        <header className="sticky top-0 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-orange-100/50 z-30 px-5 pt-8 sm:pt-10 pb-4 flex flex-col gap-3">
+        {/* Brand Theme Header matching the screenshot layout exactly */}
+        <header className="sticky top-0 bg-gradient-to-b from-[#FAF8F5] via-[#FAF8F5]/95 to-[#FAF8F5]/80 backdrop-blur-xl z-30 px-5 pt-8 sm:pt-10 pb-5 flex flex-col gap-3 relative">
+          
+          {/* Modern feathered white gradient + blur effect at the bottom of the header */}
+          <div className="absolute -bottom-8 left-0 right-0 h-8 bg-gradient-to-b from-[#FAF8F5]/80 via-[#FAF8F5]/30 to-transparent pointer-events-none z-20 backdrop-blur-[5px]" />
+
           <div className="flex justify-between items-center">
             {/* Logo and Greeting */}
             <div className="flex items-center gap-2.5">
-              <div 
-                className="w-11 h-11 rounded-full bg-gradient-to-tr from-orange-650 to-amber-500 flex items-center justify-center text-white font-extrabold text-2xl shadow-md border-2 border-white cursor-pointer active:scale-95 transition-transform"
-                onClick={() => setActiveTab('home')}
-              >
-                D
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-md border border-neutral-100">
+                <div 
+                  className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#EA580C] to-[#F59E0B] flex items-center justify-center text-white font-extrabold text-2xl border border-white/40 cursor-pointer active:scale-95 transition-transform"
+                  onClick={() => setActiveTab('home')}
+                >
+                  D
+                </div>
               </div>
-              <div>
-                <h1 className="text-xl font-black text-brand-black uppercase tracking-tight flex items-baseline gap-1 font-heading">
-                  Dagi <span className="text-orange-605 text-[10px] font-bold text-orange-600 tracking-[0.05em] capitalize">Digital Menu</span>
-                </h1>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <div className="flex items-center gap-1">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <p className="text-[9px] font-bold tracking-wider text-amber-800 uppercase">Interactive 3D & AR</p>
-                  </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1 font-ethiopic font-black text-xl tracking-tight leading-none">
+                  <span className="text-[#1E1B18]">ዳጊ</span>
+                  <span className="text-[#EA580C]">ፋስት ፉድ</span>
+                </div>
+                <div className="flex items-center gap-1 mt-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span>
+                  <span className="text-[8px] font-black tracking-widest text-[#B91C1C] uppercase">INTERACTIVE 3D & AR</span>
+                </div>
+                <div className="flex items-center mt-1">
                   <a 
-                    href="https://www.google.com/search?kgmid=%2Fg%2F11z5pc764n&hl=en-ET&q=Dagi%20fast%20food&shem=epsd1%2Cltac%2Crimspwouohc&shndl=30&source=sh%2Fx%2Floc%2Fosrp%2Fm1%2F2&kgs=a10f07a17213e860"
+                    href="https://www.google.com/search?kgmid=%2Fg%2F11z5pc764n&hl=en-ET&q=Dagi%20fast%20food"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 bg-white hover:bg-orange-50 border border-orange-100/50 rounded-full px-2 py-0.5 text-[8px] font-black text-neutral-600 transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
-                    title="View Real Google Maps Rating & Reviews"
+                    className="flex items-center gap-1 bg-white border border-neutral-200/60 rounded-full px-2.5 py-0.5 text-[8px] font-bold text-neutral-600 shadow-sm hover:scale-105 active:scale-95 transition-transform"
                   >
-                    <span className="text-red-600 font-black">G</span>
+                    <span className="text-red-600 font-extrabold">G</span>
                     <span className="text-amber-500">★</span>
-                    <span className="font-extrabold text-neutral-700">4.7 Rating</span>
+                    <span className="text-neutral-700">4.7 Rating</span>
                   </a>
                 </div>
               </div>
@@ -299,18 +318,18 @@ function MenuHome() {
             <div className="flex items-center gap-1.5">
               <button 
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="p-2.5 rounded-full bg-white border border-neutral-100 text-neutral-700 active:scale-95 transition-all shadow-sm"
+                className="w-10 h-10 rounded-full bg-white border border-neutral-100 flex items-center justify-center active:scale-95 transition-all shadow-md relative text-neutral-800"
                 title="Search Digital Menu"
               >
-                <Search size={16} className="text-neutral-800" />
+                <Search size={18} strokeWidth={2} />
               </button>
               
               <button 
                 onClick={() => setIsQuickMenuOpen(!isQuickMenuOpen)}
-                className="p-2.5 rounded-full bg-white border border-neutral-100 text-neutral-700 active:scale-95 transition-all shadow-sm relative"
+                className="w-10 h-10 rounded-full bg-white border border-neutral-100 flex items-center justify-center active:scale-95 transition-all shadow-md relative text-[#EA580C]"
                 title="Quick filters"
               >
-                <Menu size={16} className="text-brand-orange" />
+                <Menu size={18} strokeWidth={2.5} />
               </button>
             </div>
           </div>
@@ -367,16 +386,16 @@ function MenuHome() {
                     All Culinary Items
                   </button>
                   <button 
-                    onClick={() => { setActiveCategory('Wrap'); setIsQuickMenuOpen(false); setActiveTab('menu'); }}
-                    className={`w-full text-left text-xs font-bold py-1.5 px-2 rounded-lg transition-colors ${activeCategory === 'Wrap' ? 'bg-orange-50 text-orange-600' : 'hover:bg-neutral-55 text-neutral-700 hover:bg-neutral-50'}`}
+                    onClick={() => { setActiveCategory('FastFood'); setIsQuickMenuOpen(false); setActiveTab('menu'); }}
+                    className={`w-full text-left text-xs font-bold py-1.5 px-2 rounded-lg transition-colors ${activeCategory === 'FastFood' ? 'bg-orange-50 text-orange-600' : 'hover:bg-neutral-55 text-neutral-700 hover:bg-neutral-50'}`}
                   >
-                    Gourmet Wraps
+                    Fast Food Dishes
                   </button>
                   <button 
-                    onClick={() => { setActiveCategory('Burrito'); setIsQuickMenuOpen(false); setActiveTab('menu'); }}
-                    className={`w-full text-left text-xs font-bold py-1.5 px-2 rounded-lg transition-colors ${activeCategory === 'Burrito' ? 'bg-orange-50 text-orange-600' : 'hover:bg-neutral-55 text-neutral-700 hover:bg-neutral-50'}`}
+                    onClick={() => { setActiveCategory('main dish'); setIsQuickMenuOpen(false); setActiveTab('menu'); }}
+                    className={`w-full text-left text-xs font-bold py-1.5 px-2 rounded-lg transition-colors ${activeCategory === 'main dish' ? 'bg-orange-50 text-orange-600' : 'hover:bg-neutral-55 text-neutral-700 hover:bg-neutral-50'}`}
                   >
-                    Stuffed Burritos
+                    Main Course Dishes
                   </button>
                   <div className="pt-2 border-t border-neutral-50 flex justify-between">
                     <button 
@@ -420,331 +439,150 @@ function MenuHome() {
                 exit={{ opacity: 0 }}
                 className="space-y-6 p-5"
               >
-                {/* Chef's Highlight / Live AR Guide Card with complete Interactive Simulator */}
-                <div className="bg-gradient-to-br from-brand-orange to-[#FA5A15] rounded-[2.2rem] p-5.5 text-white shadow-xl relative overflow-hidden group border border-orange-500/15">
-                  {/* Glowing graphic elements */}
-                  <div className="absolute top-0 right-0 w-36 h-36 bg-amber-300/35 rounded-full blur-2xl -mr-16 -mt-16 group-hover:scale-125 transition-transform duration-700" />
-                  <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/10 rounded-full blur-xl" />
-                  
-                  <div className="space-y-3.5 relative z-10">
-                    <div className="flex items-center justify-between gap-1.5 flex-wrap">
-                      <span className="bg-white/20 text-white font-extrabold text-[9px] uppercase tracking-widest px-3 py-1 rounded-full border border-white/20">
-                        ⚡ LIVE AR DINING GUIDE
-                      </span>
-                      <span className="text-[10px] text-amber-300 font-extrabold flex items-center gap-1 animate-pulse drop-shadow-sm">
-                        <span>●</span> LIVE COORDINATES
-                      </span>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-xl font-black tracking-tight leading-none uppercase font-heading text-white">
-                        Interactive AR Table
-                      </h3>
-                      <p className="text-[10px] text-orange-50 font-semibold leading-relaxed mt-1">
-                        Project our premium gourmet wraps or stuffed burritos directly onto your current physical table! Check details and scale proportions prior to ordering.
-                      </p>
-                    </div>
 
-                    {/* Simulator Action Button */}
-                    <button
-                      onClick={() => setShowArGuideScanned(!showArGuideScanned)}
-                      className="w-full bg-white hover:bg-[#FAF8F5] text-brand-orange text-[10px] font-black uppercase tracking-widest py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-95 transition-all text-center cursor-pointer font-sans"
+
+                {/* SECTION 1: CUSTOMERS' CHOICE (የደንበኞች ምርጫ) */}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center px-1">
+                    <h2 className="text-sm font-black text-brand-black uppercase tracking-wider flex items-center gap-1.5 font-ethiopic text-[#1E1B18]">
+                      <span className="text-[#EA580C] text-lg">✦</span>
+                      <span>የደንበኞች ምርጫ</span>
+                    </h2>
+                    <button 
+                      onClick={() => { setActiveTab('menu'); setActiveCategory('All'); }}
+                      className="text-[10px] text-[#EA580C] hover:text-orange-700 font-extrabold uppercase tracking-widest"
                     >
-                      <Sparkles size={11} className="fill-brand-orange" />
-                      <span>{showArGuideScanned ? 'Close Interactive Simulator' : 'Show Live AR Desk Simulator'}</span>
+                      VIEW MENU
                     </button>
+                  </div>
 
-                    {/* Animated AR Projection Simulator Panel */}
-                    <AnimatePresence>
-                      {showArGuideScanned && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="overflow-hidden space-y-3.5 pt-3 border-t border-white/20"
+                  {/* 2-Column Grid as displayed in the screenshot */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {allDishes.filter(item => item.id === 'ff-1' || item.id === 'ff-2').map((item) => {
+                      const veg = isVegDish(item.name);
+                      return (
+                        <div 
+                          key={item.id}
+                          id={`card-${item.id}`}
+                          onClick={() => setSelectedItem(item)}
+                          className="bg-white rounded-[2.2rem] p-4 shadow-[0_10px_25px_rgba(0,0,0,0.03)] border border-neutral-100/50 cursor-pointer transition-all active:scale-[0.98] flex flex-col justify-between relative group"
                         >
-                          {/* Dish Selection Row */}
-                          <div className="space-y-1">
-                            <span className="text-[8.5px] uppercase tracking-wider font-extrabold text-white/95 block">
-                              1. Select Culinary Entree
-                            </span>
-                            <div className="grid grid-cols-4 gap-1.5">
-                              {allDishes.map((dish) => (
-                                <button
-                                  key={dish.id}
-                                  onClick={() => setArSimulatedDishId(dish.id)}
-                                  className={`p-1.5 rounded-xl border text-[8px] font-extrabold uppercase transition-all truncate text-center cursor-pointer ${
-                                    arSimulatedDishId === dish.id
-                                      ? 'bg-white border-white text-brand-orange shadow-md'
-                                      : 'bg-white/10 border-white/20 text-white hover:bg-white/15'
-                                  }`}
-                                >
-                                  {dish.name.split('•')[0].replace('Dagi', '').trim()}
-                                </button>
-                              ))}
+                          {/* Vegetarian/Non-Vegetarian square badge */}
+                          <div className="absolute top-4 left-4 z-10 bg-white/90 p-1 rounded-lg shadow-sm border border-neutral-100">
+                            <div className={`w-4 h-4 border-2 ${veg ? 'border-emerald-600' : 'border-red-600'} flex items-center justify-center p-[2px] rounded-sm`}>
+                              <div className={`w-2 h-2 rounded-full ${veg ? 'bg-emerald-600' : 'bg-red-600'}`} />
                             </div>
                           </div>
 
-                          {/* Grid Table Viewfinder */}
-                          <div className="relative h-44 rounded-2.5xl overflow-hidden bg-black/40 border border-white/10 flex flex-col justify-center items-center">
-                            {/* Wooden Board Simulated Table Background */}
-                            <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.15)_1px,transparent_1px)] [background-size:16px_16px] opacity-40" />
-                            <div className="absolute bottom-0 inset-x-0 h-1/3 bg-gradient-to-t from-black/30 to-transparent" />
-                            
-                            {/* Scanning Viewfinder Lines & Crosshairs */}
-                            <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 border-t border-dashed border-white/25 z-0" />
-                            <div className="absolute inset-y-4 left-1/2 -translate-x-1/2 border-l border-dashed border-white/25 z-0" />
-                            <div className="absolute top-3 left-3 flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-md text-[7px] text-[#22C55E] border border-green-500/20 font-mono z-10">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-ping" />
-                              <span>DEPTH CALIBRATED</span>
-                            </div>
+                          {/* Plated circular food visual representation */}
+                          <div className="relative w-28 h-28 mx-auto mt-4 rounded-full overflow-hidden border-4 border-white shadow-md bg-gradient-to-b from-[#F2EDEA] to-[#E2DCD8] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                            <img 
+                              src={item.imageUrl} 
+                              alt={item.name} 
+                              className="w-full h-full object-cover rounded-full"
+                              referrerPolicy="no-referrer"
+                              onError={(e) => handleImageError(e, item.imageUrl)}
+                            />
+                          </div>
 
-                            {/* Camera Holographic Ring */}
-                            <div className="absolute inset-0 m-auto w-32 h-32 rounded-full border-2 border-white/10 animate-pulse pointer-events-none" />
-
-                            {/* Rotating Interactive Dish on a serving plate */}
-                            {(() => {
-                              const selDish = allDishes.find(d => d.id === arSimulatedDishId) || allDishes[0];
-                              return (
-                                <motion.div
-                                  style={{
-                                    transform: `rotate(${arSimulatedRotation}deg) scale(${arSimulatedScale})`,
-                                    transition: arAutoSpin ? 'none' : 'transform 0.1s ease-out'
-                                  }}
-                                  className="relative w-28 h-28 rounded-full bg-gradient-to-b from-[#FAF8F5] to-neutral-200 p-1.5 shadow-[0_15px_30px_rgba(0,0,0,0.4)] border-4 border-white flex-shrink-0 z-10 cursor-pointer"
-                                >
-                                  <img
-                                    src={selDish?.imageUrl}
-                                    alt="Simulated projection"
-                                    className="w-full h-full object-cover rounded-full select-none pointer-events-none"
-                                    referrerPolicy="no-referrer"
-                                  />
-                                  <div className="absolute -bottom-1 inset-x-0 bg-brand-orange text-white text-[6.5px] font-black uppercase tracking-widest text-center py-0.5 rounded-md border border-white shadow-md max-w-[80px] mx-auto">
-                                    {arSimulatedScale === 1 ? '100% SCALE' : `${Math.round(arSimulatedScale * 100)}% SIZE`}
-                                  </div>
-                                </motion.div>
-                              );
-                            })()}
-
-                            {/* Technical overlay readout */}
-                            <div className="absolute bottom-2.5 right-3 flex items-center gap-2 bg-black/50 px-2.5 py-0.5 rounded-md text-[7px] text-white/90 font-mono z-10">
-                              <span>SCALE: {Math.round(arSimulatedScale * 100)}%</span>
-                              <span>•</span>
-                              <span>ROTATION: {Math.round(arSimulatedRotation)}°</span>
+                          <div className="space-y-1.5 mt-4 text-center">
+                            <p className="text-[9px] text-[#A28A76] tracking-widest uppercase font-extrabold font-ethiopic">
+                              {item.amharicCategory || 'ፈጣን ምግቦች'}
+                            </p>
+                            <h4 className="text-sm font-black text-[#1E1B18] font-ethiopic mt-1 line-clamp-1 h-5 group-hover:text-[#EA580C] transition-colors">
+                              {item.amharicName || item.name}
+                            </h4>
+                            <div className="mt-2">
+                              <span className="inline-block bg-[#FEFBF0] text-neutral-800 font-extrabold text-xs px-4 py-1.5 rounded-full border border-amber-100/40">
+                                {item.price.toFixed(2)}
+                              </span>
                             </div>
                           </div>
 
-                          {/* Controls Row */}
-                          <div className="bg-white/10 p-3 rounded-2xl border border-white/15 space-y-2.5">
-                            {/* Scale Slider */}
-                            <div className="flex items-center justify-between gap-3 font-sans">
-                              <span className="text-[8px] font-extrabold uppercase tracking-wider text-white/90 w-16">
-                                Scale Meal:
-                              </span>
-                              <input
-                                type="range"
-                                min="0.6"
-                                max="1.5"
-                                step="0.05"
-                                value={arSimulatedScale}
-                                onChange={(e) => {
-                                  setArSimulatedScale(parseFloat(e.target.value));
-                                  setArAutoSpin(false); // Pause auto spin upon scroll
-                                }}
-                                className="flex-1 accent-white h-1 rounded-lg bg-white/20 outline-none"
-                              />
-                              <span className="text-[8.5px] font-mono font-bold text-amber-300 w-8 text-right">
-                                {Math.round(arSimulatedScale * 100)}%
-                              </span>
-                            </div>
-
-                            {/* Rotation Slider */}
-                            <div className="flex items-center justify-between gap-3 font-sans">
-                              <span className="text-[8px] font-extrabold uppercase tracking-wider text-white/90 w-16">
-                                Spin Orbit:
-                              </span>
-                              <input
-                                type="range"
-                                min="0"
-                                max="360"
-                                step="1"
-                                value={arSimulatedRotation}
-                                onChange={(e) => {
-                                  setArSimulatedRotation(parseInt(e.target.value));
-                                  setArAutoSpin(false); // Pause auto spin upon scroll
-                                }}
-                                className="flex-1 accent-white h-1 rounded-lg bg-white/20 outline-none"
-                              />
-                              <span className="text-[8.5px] font-mono font-bold text-amber-300 w-8 text-right">
-                                {Math.round(arSimulatedRotation)}°
-                              </span>
-                            </div>
-
-                            {/* Toggle Row */}
-                            <div className="flex justify-between items-center pt-1 border-t border-white/10 font-sans">
-                              <span className="text-[7.5px] text-white/70 font-bold uppercase tracking-wider font-sans">
-                                Click plate directly to lock position
-                              </span>
-                              <label className="flex items-center gap-1.5 cursor-pointer font-sans">
-                                <input
-                                  type="checkbox"
-                                  checked={arAutoSpin}
-                                  onChange={(e) => setArAutoSpin(e.target.checked)}
-                                  className="rounded accent-orange-600 scale-90"
-                                />
-                                <span className="text-[8.5px] font-black text-white uppercase tracking-wide">
-                                  Auto-Spin Plate
-                                </span>
-                              </label>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-
-                    {/* Step guidance fallback tags */}
-                    {!showArGuideScanned && (
-                      <div className="border-t border-white/15 pt-3 flex items-center justify-between gap-2.5">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white text-[10px] font-black">1</div>
-                          <span className="text-[7.5px] font-black uppercase tracking-wider block leading-tight text-white/90">Select any wrap below</span>
+                          <button 
+                            id={`inspect-btn-${item.id}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedItem(item);
+                            }}
+                            className="mt-3.5 w-full bg-white border border-orange-200 text-[#EA580C] hover:bg-orange-50 hover:border-orange-300 transition-all text-[9.5px] font-black uppercase tracking-wider py-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-sm"
+                          >
+                            <span className="text-[#EA580C] text-xs">✦</span>
+                            <span>INSPECT AR 3D</span>
+                          </button>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white text-[10px] font-black">2</div>
-                          <span className="text-[7.5px] font-black uppercase tracking-wider block leading-tight text-white/90">Launch 3D camera preview</span>
-                        </div>
-                      </div>
-                    )}
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Section Title: Top Picks */}
-                <div className="flex justify-between items-center px-1">
-                  <h2 className="text-sm font-black text-brand-black uppercase tracking-wider flex items-center gap-1.5 font-heading">
-                    <Sparkles className="text-brand-orange" size={15} fill="currentColor" />
-                    <span>Top Picks For You</span>
-                  </h2>
-                  <button 
-                    onClick={() => { setActiveTab('menu'); setActiveCategory('All'); }}
-                    className="text-[10px] text-brand-orange hover:text-orange-700 font-extrabold uppercase tracking-widest"
-                  >
-                    View Menu
-                  </button>
-                </div>
+                {/* SECTION 2: HOUSE SPECIALS (የቤቱ እሰፔሻል) */}
+                <div className="space-y-4 pt-2">
+                  <div className="flex justify-between items-center px-1">
+                    <h2 className="text-sm font-black text-brand-black uppercase tracking-wider flex items-center gap-1.5 font-ethiopic text-[#1E1B18]">
+                      <span className="text-[#EA580C] text-lg">✦</span>
+                      <span>የቤቱ እሰፔሻል</span>
+                    </h2>
+                  </div>
 
-                {/* Horizontal Scroll for culinary highlights matching pictured layout (rounded circle card plates!) */}
-                <div className="flex gap-4.5 overflow-x-auto no-scrollbar py-2.5 px-1">
-                  {allDishes.map((item) => {
-                    const price = typeof item.price === 'number' ? item.price : parseFloat(item.price as any) || 0;
-                    const veg = isVegDish(item.name);
-                    return (
-                      <div 
-                        key={item.id}
-                        onClick={() => setSelectedItem(item)}
-                        className="w-[155px] flex-shrink-0 bg-white border border-orange-100/30 p-4 rounded-[2.2rem] shadow-sm hover:shadow-md cursor-pointer transition-all active:scale-[0.98] flex flex-col justify-between relative group"
-                      >
-                        {/* Indian Veg/Non Veg small indicator square helper - extremely authentic design touch */}
-                        <div className="absolute top-3.5 left-3.5 z-10 bg-white/90 p-1.5 rounded-md shadow-sm border border-neutral-100">
-                          <div className={`w-3.5 h-3.5 border-2 ${veg ? 'border-emerald-600' : 'border-red-600'} flex items-center justify-center p-[2px]`}>
-                            <div className={`w-2 h-2 ${veg ? 'rounded-full bg-emerald-600' : 'bg-red-600 Rotate-45'}`} />
+                  {/* 2-Column Grid for House Specials */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {allDishes.filter(item => item.id !== 'ff-1' && item.id !== 'ff-2').map((item) => {
+                      const veg = isVegDish(item.name);
+                      return (
+                        <div 
+                          key={item.id}
+                          id={`card-${item.id}`}
+                          onClick={() => setSelectedItem(item)}
+                          className="bg-white rounded-[2.2rem] p-4 shadow-[0_10px_25px_rgba(0,0,0,0.03)] border border-neutral-100/50 cursor-pointer transition-all active:scale-[0.98] flex flex-col justify-between relative group"
+                        >
+                          {/* Vegetarian/Non-Vegetarian square badge */}
+                          <div className="absolute top-4 left-4 z-10 bg-white/90 p-1 rounded-lg shadow-sm border border-neutral-100">
+                            <div className={`w-4 h-4 border-2 ${veg ? 'border-emerald-600' : 'border-red-600'} flex items-center justify-center p-[2px] rounded-sm`}>
+                              <div className={`w-2 h-2 rounded-full ${veg ? 'bg-emerald-600' : 'bg-red-600'}`} />
+                            </div>
                           </div>
-                        </div>
 
-
-
-                        {/* Stunning plated plated-round dish visual element. Double border simulates premium serving plate. */}
-                        <div className="relative w-28 h-28 mx-auto mt-2 bg-gradient-to-b from-[#F2EDEA] to-[#E2DCD8] rounded-full overflow-hidden border-4 border-white shadow-md group-hover:scale-105 transition-transform duration-300">
-                          <img 
-                            src={item.imageUrl} 
-                            alt={item.name} 
-                            className="w-full h-full object-cover rounded-full"
-                            referrerPolicy="no-referrer"
-                          />
-                        </div>
-
-                        <div className="space-y-1.5 mt-4 text-center">
-                          <p className="text-[9px] text-[#A28A76] tracking-widest uppercase font-extrabold">{item.category}</p>
-                          <h4 className="text-xs font-black text-brand-black line-clamp-1 leading-tight font-heading group-hover:text-brand-orange transition-colors">
-                            {item.name.split('•')[0].trim()}
-                          </h4>
-                          <span className="text-xs font-black text-brand-black bg-[#FAF8F5] border border-orange-100 px-3 py-1 rounded-full inline-block">
-                            ${price.toFixed(2)}
-                          </span>
-                        </div>
-
-                        <div className="mt-3.5 w-full bg-orange-655 border border-brand-orange/20 text-brand-orange bg-orange-50/50 hover:bg-brand-orange hover:text-white transition-colors text-[9px] font-black uppercase text-center py-2 rounded-xl flex items-center justify-center gap-1.5">
-                          <Sparkles size={11} fill="currentColor" />
-                          <span>Inspect AR 3D</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Section Title: Recommended list items */}
-                <div className="flex justify-between items-center px-1 pt-2">
-                  <h2 className="text-sm font-black text-brand-black uppercase tracking-wider flex items-center gap-1.5 font-heading">
-                    <UtensilsCrossed className="text-brand-orange" size={15} />
-                    <span>Recommended Combinations</span>
-                  </h2>
-                </div>
-
-                {/* Recommended Culinary items shown 2 side-by-side in high-contrast round plate grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  {searchedMenu.map((item) => {
-                    const price = typeof item.price === 'number' ? item.price : parseFloat(item.price as any) || 0;
-                    const veg = isVegDish(item.name);
-                    return (
-                      <div
-                        key={item.id}
-                        onClick={() => setSelectedItem(item)}
-                        className="bg-white border border-neutral-100 rounded-[2.2rem] p-3.5 shadow-sm hover:shadow-md cursor-pointer transition-all active:scale-[0.97] flex flex-col justify-between group relative overflow-hidden"
-                      >
-                        {/* Authentic Vegetarian indicator dot */}
-                        <div className="absolute top-3.5 left-3.5 z-10 bg-white/95 p-1 rounded-md border border-neutral-100 shadow-sm">
-                          <div className={`w-3 h-3 border ${veg ? 'border-emerald-600' : 'border-red-600'} flex items-center justify-center p-[1px]`}>
-                            <div className={`w-1.5 h-1.5 ${veg ? 'rounded-full bg-emerald-600' : 'bg-red-600'}`} />
+                          {/* Plated circular food visual representation */}
+                          <div className="relative w-28 h-28 mx-auto mt-4 rounded-full overflow-hidden border-4 border-white shadow-md bg-gradient-to-b from-[#F2EDEA] to-[#E2DCD8] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                            <img 
+                              src={item.imageUrl} 
+                              alt={item.name} 
+                              className="w-full h-full object-cover rounded-full"
+                              referrerPolicy="no-referrer"
+                              onError={(e) => handleImageError(e, item.imageUrl)}
+                            />
                           </div>
-                        </div>
 
-
-
-                        {/* Beautiful plated circular foods with hover interactive scale */}
-                        <div className="relative w-24 h-24 mx-auto mt-2.5 bg-gradient-to-b from-[#F2EDEA] to-[#E2DCD8] rounded-full overflow-hidden border-2 border-white shadow-md group-hover:scale-105 transition-transform duration-300">
-                          <img 
-                            src={item.imageUrl} 
-                            alt={item.name} 
-                            className="w-full h-full object-cover rounded-full"
-                            referrerPolicy="no-referrer"
-                          />
-                          <div className="absolute bottom-0 inset-x-0 bg-neutral-900/40 backdrop-blur-[1px] py-1 text-center">
-                            <span className="text-[7px] text-amber-300 font-black tracking-widest uppercase">3D Viewer</span>
-                          </div>
-                        </div>
-
-                        <div className="space-y-1 mt-3.5 text-center flex-1 flex flex-col justify-between">
-                          <div>
-                            <p className="text-[8px] text-[#A28A76] tracking-widest uppercase font-extrabold">{item.category}</p>
-                            <h4 className="text-xs font-black text-brand-black line-clamp-2 leading-tight font-heading group-hover:text-brand-orange transition-colors px-0.5">
-                              {item.name.split('•')[0].trim()}
+                          <div className="space-y-1.5 mt-4 text-center">
+                            <p className="text-[9px] text-[#A28A76] tracking-widest uppercase font-extrabold font-ethiopic">
+                              {item.amharicCategory || 'የቤቱ እሰፔሻል'}
+                            </p>
+                            <h4 className="text-sm font-black text-[#1E1B18] font-ethiopic mt-1 line-clamp-1 h-5 group-hover:text-[#EA580C] transition-colors">
+                              {item.amharicName || item.name}
                             </h4>
+                            <div className="mt-2">
+                              <span className="inline-block bg-[#FEFBF0] text-neutral-800 font-extrabold text-xs px-4 py-1.5 rounded-full border border-amber-100/40">
+                                {item.price.toFixed(2)}
+                              </span>
+                            </div>
                           </div>
-                          
-                          <div className="pt-2">
-                            <span className="text-xs font-black text-brand-black bg-[#FAF8F5] border border-orange-100 px-3 py-1 rounded-full inline-block">
-                              ${price.toFixed(2)}
-                            </span>
-                          </div>
-                        </div>
 
-                        <button className="mt-3.5 w-full bg-orange-50 border border-orange-100 group-hover:bg-brand-orange group-hover:text-white transition-all text-brand-orange text-[9px] font-black uppercase tracking-wider py-2 rounded-xl flex items-center justify-center gap-1">
-                          <Sparkles size={10} fill="currentColor" />
-                          <span>Inspect</span>
-                        </button>
-                      </div>
-                    );
-                  })}
+                          <button 
+                            id={`inspect-btn-${item.id}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedItem(item);
+                            }}
+                            className="mt-3.5 w-full bg-white border border-orange-200 text-[#EA580C] hover:bg-orange-50 hover:border-orange-300 transition-all text-[9.5px] font-black uppercase tracking-wider py-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-sm"
+                          >
+                            <span className="text-[#EA580C] text-xs">✦</span>
+                            <span>INSPECT AR 3D</span>
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
 
               </motion.div>
@@ -776,7 +614,7 @@ function MenuHome() {
                           : 'bg-white text-neutral-600 border border-neutral-100 hover:border-orange-200'
                       }`}
                     >
-                      {category}s
+                      {category === 'All' ? 'All Items' : category === 'FastFood' ? 'Fast Food' : 'Main Dishes'}
                     </button>
                   ))}
                 </div>
@@ -812,6 +650,7 @@ function MenuHome() {
                             alt={item.name} 
                             className="w-full h-full object-cover rounded-full"
                             referrerPolicy="no-referrer"
+                            onError={(e) => handleImageError(e, item.imageUrl)}
                           />
                           <div className="absolute bottom-0 inset-x-0 bg-neutral-900/40 backdrop-blur-[1px] py-1 text-center">
                             <span className="text-[7px] text-amber-300 font-black tracking-widest uppercase">3D Viewer</span>
@@ -820,15 +659,17 @@ function MenuHome() {
 
                         <div className="space-y-1 mt-3.5 text-center flex-1 flex flex-col justify-between">
                           <div>
-                            <span className="text-[8px] uppercase tracking-widest font-black text-orange-600 block">{item.category}</span>
-                            <h3 className="font-extrabold text-xs text-brand-black line-clamp-2 leading-tight font-heading group-hover:text-brand-orange transition-colors px-0.5">
-                              {item.name.split('•')[0].trim()}
+                            <span className="text-[8px] uppercase tracking-widest font-black text-orange-600 block font-ethiopic">
+                              {item.amharicCategory || item.category}
+                            </span>
+                            <h3 className="font-extrabold text-xs text-brand-black line-clamp-2 leading-tight font-heading group-hover:text-brand-orange transition-colors px-0.5 font-ethiopic">
+                              {item.amharicName || item.name.split('•')[0].trim()}
                             </h3>
                           </div>
 
                           <div className="pt-2">
                             <span className="text-xs font-black text-brand-black bg-[#FAF8F5] border border-orange-100 px-3 py-1 rounded-full inline-block">
-                              ${price.toFixed(2)}
+                              {price.toFixed(2)}
                             </span>
                           </div>
                         </div>
@@ -1052,29 +893,26 @@ function MenuHome() {
         </main>
 
         {/* Floating device bottom tab navigation (exactly three columns: Home, Menu, Social) */}
-        <nav className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-orange-100/50 flex justify-around items-center p-3.5 z-40 pb-6 rounded-t-[2.2rem] shadow-lg">
+        <nav className="absolute bottom-5 left-5 right-5 bg-white border border-neutral-100 rounded-3xl flex justify-around items-center py-3.5 px-5 z-40 shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
           <button
             onClick={() => setActiveTab('home')}
-            className={`flex-1 flex flex-col items-center gap-1 transition-all ${activeTab === 'home' ? 'text-brand-orange font-black scale-105' : 'text-neutral-400 hover:text-neutral-600'}`}
+            className={`flex-1 flex flex-col items-center gap-1 transition-all ${activeTab === 'home' ? 'text-[#EA580C] scale-105' : 'text-neutral-400 hover:text-neutral-600'}`}
           >
-            <Home size={18} fill={activeTab === 'home' ? 'currentColor' : 'none'} />
-            <span className="text-[8px] uppercase tracking-widest font-extrabold mt-0.5">Home</span>
+            <Home size={22} fill={activeTab === 'home' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'home' ? 0 : 2} className="transition-transform duration-200" />
           </button>
 
           <button
             onClick={() => setActiveTab('menu')}
-            className={`flex-1 flex flex-col items-center gap-1 transition-all ${activeTab === 'menu' ? 'text-brand-orange font-black scale-105' : 'text-neutral-400 hover:text-neutral-600'}`}
+            className={`flex-1 flex flex-col items-center gap-1 transition-all ${activeTab === 'menu' ? 'text-[#EA580C] scale-105' : 'text-neutral-400 hover:text-neutral-600'}`}
           >
-            <Menu size={18} className="stroke-[2.5]" />
-            <span className="text-[8px] uppercase tracking-widest font-extrabold mt-0.5">Menu</span>
+            <Menu size={22} className="stroke-[2.5]" />
           </button>
 
           <button
             onClick={() => setActiveTab('social')}
-            className={`flex-1 flex flex-col items-center gap-1 transition-all ${activeTab === 'social' ? 'text-brand-orange font-black scale-105' : 'text-neutral-400 hover:text-neutral-600'}`}
+            className={`flex-1 flex flex-col items-center gap-1 transition-all ${activeTab === 'social' ? 'text-[#EA580C] scale-105' : 'text-neutral-400 hover:text-neutral-600'}`}
           >
-            <MessageSquare size={18} fill={activeTab === 'social' ? 'currentColor' : 'none'} />
-            <span className="text-[8px] uppercase tracking-widest font-extrabold mt-0.5">Social</span>
+            <MessageSquare size={22} fill={activeTab === 'social' ? 'currentColor' : 'none'} strokeWidth={activeTab === 'social' ? 0 : 2} />
           </button>
         </nav>
 
@@ -1131,11 +969,11 @@ function MenuHome() {
                 {/* Core description texts */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-baseline gap-4">
-                    <h1 className="text-2xl font-black text-brand-black leading-tight font-heading">
-                      {selectedItem.name.split('•')[0].trim()}
+                    <h1 className="text-2xl font-black text-[#1E1B18] leading-tight font-heading font-ethiopic">
+                      {selectedItem.amharicName || selectedItem.name.split('•')[0].trim()}
                     </h1>
-                    <span className="text-xl font-black tracking-tight text-brand-orange text-nowrap">
-                      ${(typeof selectedItem.price === 'number' ? selectedItem.price : parseFloat(selectedItem.price as any) || 0).toFixed(2)}
+                    <span className="text-xl font-black tracking-tight text-[#EA580C] text-nowrap font-ethiopic">
+                      {(typeof selectedItem.price === 'number' ? selectedItem.price : parseFloat(selectedItem.price as any) || 0).toFixed(2)} Br
                     </span>
                   </div>
                   

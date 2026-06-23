@@ -26,6 +26,26 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   const [scale, setScale] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
   const [arSupported, setArSupported] = useState(false);
+  const [currentPoster, setCurrentPoster] = useState(poster);
+
+  useEffect(() => {
+    const imageFallbacks: Record<string, string> = {
+      '/qhom/borrito.jpg': 'https://images.unsplash.com/photo-1626379616459-b2ce1d9decbc?auto=format&fit=crop&w=800&q=80',
+      '/qhom/special borrito.jpg': 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80',
+      '/qhom/pasta.jpg': 'https://images.unsplash.com/photo-1574484284002-982dac98677c?auto=format&fit=crop&w=800&q=80'
+    };
+
+    const imgObj = new Image();
+    imgObj.src = poster;
+    imgObj.onload = () => {
+      setCurrentPoster(poster);
+    };
+    imgObj.onerror = () => {
+      if (poster in imageFallbacks) {
+        setCurrentPoster(imageFallbacks[poster]);
+      }
+    };
+  }, [poster]);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -189,10 +209,44 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
       )}
 
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-red-50/50 z-20">
-          <div className="text-center p-6">
-            <p className="text-xs text-red-500 font-medium uppercase tracking-wider mb-2">Visual Unavailable</p>
-            <p className="text-[10px] text-red-400 opacity-70">The kitchen is experiencing technical difficulties with this projection.</p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-900/95 text-white z-20 p-6 text-center">
+          <div className="relative z-10 space-y-4 max-w-sm">
+            <div className="w-12 h-12 rounded-full bg-orange-500/10 border-2 border-orange-500 flex items-center justify-center mx-auto text-orange-400 animate-pulse">
+              <Sparkles size={20} />
+            </div>
+            
+            <div className="space-y-1">
+              <h4 className="text-sm font-black uppercase text-amber-500 tracking-wider">Local Asset Required</h4>
+              <p className="text-[10px] text-neutral-300 leading-relaxed font-semibold">
+                Please upload your custom 3D model GLB file <code className="bg-black/50 px-1 py-0.5 rounded text-orange-400 font-mono text-[9px]">{src}</code> into the <code className="bg-black/50 px-1 py-0.5 rounded text-neutral-300 font-mono text-[9px]">/public/qhom/</code> folder using the file explorer on the left!
+              </p>
+            </div>
+            
+            <button
+              onClick={() => {
+                setError(false);
+                setIsLoaded(false);
+                const isBurrito = src.toLowerCase().includes('burrito');
+                const isPasta = src.toLowerCase().includes('scanned') || src.toLowerCase().includes('pasta') || src.toLowerCase().includes('spaghetti');
+                const viewer = viewerRef.current;
+                if (viewer) {
+                  if (isBurrito) {
+                    if (src.includes('burnt_egg')) {
+                      viewer.src = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/BarramundiFish/glTF-Binary/BarramundiFish.glb';
+                    } else {
+                      viewer.src = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Avocado/glTF-Binary/Avocado.glb';
+                    }
+                  } else if (isPasta) {
+                    viewer.src = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/WaterBottle/glTF-Binary/WaterBottle.glb';
+                  } else {
+                    viewer.src = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Duck/glTF-Binary/Duck.glb';
+                  }
+                }
+              }}
+              className="bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-amber-600 text-white text-[10px] uppercase font-black tracking-widest px-5 py-2.5 rounded-xl cursor-pointer shadow-lg active:scale-95 transition-all w-full"
+            >
+              Demo with standard 3D asset
+            </button>
           </div>
         </div>
       )}
@@ -205,7 +259,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         ar-modes="webxr scene-viewer quick-look"
         ar-scale="auto"
         provide-id
-        poster={poster}
+        poster={currentPoster}
         alt={alt}
         camera-controls
         auto-rotate

@@ -1,9 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
+
+/* 
+  =========================================
+  CUSTOM FONT CONFIGURATION (ይህን ክፍል ያርትዑ)
+  =========================================
+  To use your own custom font, upload your file (e.g. MyFont.ttf) 
+  into the "/public/fonts/" folder, then modify the first src: url(...) line below:
+*/
+@font-face {
+  font-family: 'EthiopicCustom';
+  src: /* 1. EDIT THIS LINE TO USE YOUR OWN UPLOADED FONT: */
+       url('/fonts/custom.ttf') format('truetype'),
+       url('/fonts/custom.woff2') format('woff2'),
+       url('/fonts/custom.woff') format('woff'),
+       
+       /* Fallbacks for system compatibility */
+       url('/qhom/fonts/custom.woff2') format('woff2'),
+       url('/qhom/fonts/custom.woff') format('woff'),
+       url('/qhom/fonts/custom.ttf') format('truetype'),
+       url('/qhom/fonts/Washra.ttf') format('truetype'),
+       url('/qhom/fonts/Jiret.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 @theme {
   --font-sans: "Plus Jakarta Sans", sans-serif;
   --font-heading: "Outfit", sans-serif;
+  --font-ethiopic: "EthiopicCustom", "Noto Sans Ethiopic", "Nyala", "Abyssinica SIL", "Kefa", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   
   --color-brand-orange: #EA580C;
@@ -22,6 +48,11 @@ body {
   overflow-x: hidden;
 }
 
+/* Custom font styling utility classes */
+.font-ethiopic {
+  font-family: var(--font-ethiopic);
+}
+
 /* Custom scrollbar utility */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -30,4 +61,3 @@ body {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
-
