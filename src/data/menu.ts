@@ -23,8 +23,8 @@ export const MENU_DATA: MenuItem[] = [
     ingredients: ['Flour Tortilla', 'Garden Greens', 'Haas Avocado', 'Sliced Tomatoes', 'Garlic Herb Dressing'],
     allergens: ['Gluten'],
     calories: 380,
-    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Avocado/glTF-Binary/Avocado.glb",
-    imageUrl: "https://images.unsplash.com/photo-1626379616459-b2ce1d9decbc?auto=format&fit=crop&w=800&q=80",
+    modelUrl: "/qhom/burrito.glb",
+    imageUrl: "/qhom/borrito.jpg",
     category: 'FastFood',
     amharicCategory: 'ፈጣን ምግቦች'
   },
@@ -37,8 +37,8 @@ export const MENU_DATA: MenuItem[] = [
     ingredients: ['Crispy Cod Filet', 'Spinach Tortilla', 'Double Swiss Cheese', 'Organic Cabbage', 'Dill Tartar Cream'],
     allergens: ['Fish', 'Gluten', 'Dairy'],
     calories: 520,
-    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/BarramundiFish/glTF-Binary/BarramundiFish.glb",
-    imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+    modelUrl: "/qhom/burnt_egg_burrito.glb",
+    imageUrl: "/qhom/special borrito.jpg",
     category: 'FastFood',
     amharicCategory: 'ፈጣን ምግቦች'
   },
@@ -51,9 +51,9 @@ export const MENU_DATA: MenuItem[] = [
     ingredients: ['Flour Tortilla', 'Seasoned Yellow Rice', 'Savory Black Beans', 'Sweet Corn', 'Melted Cheddar'],
     allergens: ['Gluten', 'Dairy'],
     calories: 540,
-    modelUrl: "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/WaterBottle/glTF-Binary/WaterBottle.glb",
-    imageUrl: "https://images.unsplash.com/photo-1574484284002-982dac98677c?auto=format&fit=crop&w=800&q=80",
+    modelUrl: "/qhom/ertib.glb",
+    imageUrl: "/qhom/pasta.jpg",
     category: 'main dish',
-    amharicCategory: 'የቤቱ እሰፔሻል'
+    amharicCategory: ''
   }
 ];
