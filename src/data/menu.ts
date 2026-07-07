@@ -1,3 +1,11 @@
+// ============================================================
+//  MENU CONFIG — edit this file to add or change menu items
+//
+//  1. Drop your image into:   public/qhom/
+//  2. Drop your 3D model into: public/qhom/
+//  3. Add an entry below — just type the filenames, no paths needed
+// ============================================================
+
 export interface MenuItem {
   id: string;
   name: string;
@@ -13,47 +21,77 @@ export interface MenuItem {
   amharicCategory: string;
 }
 
-export const MENU_DATA: MenuItem[] = [
+// ── Add your dishes here ────────────────────────────────────
+const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; model: string }> = [
+
   {
     id: 'ff-1',
     name: 'Dagi Normal Burrito',
     amharicName: 'በሪቶ',
-    price: 230.00,
-    description: 'በድንች፣ አቮካዶ፣ እንቁላል እና አትክልት የተሞላ ትኩስና እና ጣፋጭ ቡሪቶ።)',
-    ingredients: ['ቂጣ', 'ድንች', 'አቮካዶ', 'እንቁላል', 'የበሰሉ አትክልቶች',],
+    price: 230,
+    description: 'በድንች፣ አቮካዶ፣ እንቁላል እና አትክልት የተሞላ ትኩስና እና ጣፋጭ ቡሪቶ።',
+    ingredients: ['ቂጣ', 'ድንች', 'አቮካዶ', 'እንቁላል', 'የበሰሉ አትክልቶች'],
     allergens: ['ግሉተን (ቂጣ)', 'እንቁላል'],
     calories: 600,
-    modelUrl: "/qhom/burrito.glb",
-    imageUrl: "/qhom/borrito.jpg",
     category: 'FastFood',
-    amharicCategory: 'ፈጣን ምግቦች'
+    amharicCategory: 'ፈጣን ምግቦች',
+    image: 'borrito.jpg',          // ← filename in public/qhom/
+    model: 'burrito.glb',          // ← filename in public/qhom/
   },
+
   {
     id: 'ff-2',
     name: 'Dagi Special Burrito',
     amharicName: 'እስፔሻል በሪቶ',
-    price: 300.00,
+    price: 300,
     description: 'ልዩ ጣዕም የሚፈልጉ ሰዎች ምርጫ፤ የበሬ ሥጋ፣ አይብ፣ አቮካዶ፣ እንቁላል፣ የተጠበሱ ድንች እና ፈላፍል የተዋሃዱበት ልዩ ቡሪቶ።',
-    ingredients: ['ቂጣ', 'የተፈጨ  ሥጋ', 'እንቁላል', 'ድንች', 'አቮካዶ', 'አይብ', 'ፈላፍል'],
+    ingredients: ['ቂጣ', 'የተፈጨ ሥጋ', 'እንቁላል', 'ድንች', 'አቮካዶ', 'አይብ', 'ፈላፍል'],
     allergens: ['ግሉተን (ቂጣ)', 'እንቁላል', 'ወተት (አይብ)', 'ሶያ/ባቄላ (ፈላፍል)'],
     calories: 950,
-    modelUrl: "/qhom/burnt_egg_burrito.glb",
-    imageUrl: "/qhom/special borrito.jpg",
     category: 'FastFood',
-    amharicCategory: 'ፈጣን ምግቦች'
+    amharicCategory: 'ፈጣን ምግቦች',
+    image: 'special borrito.jpg',  // ← filename in public/qhom/
+    model: 'burnt_egg_burrito.glb', // ← filename in public/qhom/
   },
+
   {
     id: 'ff-3',
     name: 'Pasta • ፓስታ',
     amharicName: 'ፓስታ',
-    price: 100.00,
+    price: 100,
     description: 'ፓስታ በቲማቲም ሶስ፣ በጣዕም የተሞላ እና ግሩም ጣዕም ያለው ፓስታ።',
-    ingredients: ['ፓስታ', 'ቲማቲም ', 'በርበሬ ', 'ነጭ ሽንኩርት'],
+    ingredients: ['ፓስታ', 'ቲማቲም', 'በርበሬ', 'ነጭ ሽንኩርት'],
     allergens: ['ግሉተን (ፓስታ)'],
     calories: 450,
-    modelUrl: "/qhom/ertib.glb",
-    imageUrl: "/qhom/pasta.jpg",
     category: 'main dish',
-    amharicCategory: ''
-  }
+    amharicCategory: 'የቤቱ እሰፔሻል',
+    image: 'pasta.jpg',            // ← filename in public/qhom/
+    model: 'ertib.glb',            // ← filename in public/qhom/
+  },
+
+  // ── TEMPLATE — copy this block to add a new item ──────────
+  // {
+  //   id: 'ff-4',                          // unique id, increment the number
+  //   name: 'My New Dish',
+  //   amharicName: 'አዲስ ምግብ',
+  //   price: 150,
+  //   description: 'Short description here.',
+  //   ingredients: ['ingredient 1', 'ingredient 2'],
+  //   allergens: ['allergen 1'],
+  //   calories: 500,
+  //   category: 'FastFood',                // 'FastFood' or 'main dish'
+  //   amharicCategory: 'ፈጣን ምግቦች',
+  //   image: 'my_photo.jpg',               // ← put this file in public/qhom/
+  //   model: 'my_model.glb',              // ← put this file in public/qhom/
+  // },
+
 ];
+// ────────────────────────────────────────────────────────────
+
+// Builds full URLs automatically — no need to touch this part
+const ASSETS = '/qhom/';
+export const MENU_DATA: MenuItem[] = dishes.map(({ image, model, ...rest }) => ({
+  ...rest,
+  imageUrl: ASSETS + image,
+  modelUrl: ASSETS + model,
+}));
