@@ -263,8 +263,8 @@ function MenuHome() {
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1 font-ethiopic font-black text-xl tracking-tight leading-none">
-                  <span className="text-[#1E1B18]">ዳጊ</span>
-                  <span className="text-[#EA580C]">ፋስት ፉድ</span>
+                  <span className="text-[#1E1B18]">ሞካ</span>
+                  <span className="text-[#EA580C]">{am ? 'ካፌ' : 'Cafe'}</span>
                 </div>
                 <div className="flex items-center gap-1 mt-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span>
@@ -690,7 +690,7 @@ function MenuHome() {
                         </div>
                         <div>
                           <p className="text-sm font-black text-brand-black leading-tight">Google Maps Score</p>
-                          <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wide">Dagi Fast Food, Addis Ababa</span>
+                          <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wide">Moka Cafe, Addis Ababa</span>
                         </div>
                       </div>
                       
