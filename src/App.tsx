@@ -264,7 +264,7 @@ function MenuHome() {
               <div className="flex flex-col">
                 <div className="flex items-center gap-1 font-ethiopic font-black text-xl tracking-tight leading-none">
                   <span className="text-[#1E1B18]">ሞካ</span>
-                  <span className="text-[#EA580C]">{am ? 'ካፌ' : 'Cafe'}</span>
+                  <span className="text-[#EA580C]">{am ? 'ካፌ' : 'Coffee'}</span>
                 </div>
                 <div className="flex items-center gap-1 mt-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span>
