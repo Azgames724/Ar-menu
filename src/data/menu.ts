@@ -11,7 +11,8 @@ export interface MenuItem {
   name: string;
   amharicName: string;
   price: number;
-  description: string;
+  description: string;       // Amharic description
+  descriptionEn: string;     // English description
   ingredients: string[];
   allergens: string[];
   calories: number;
@@ -30,6 +31,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     amharicName: 'በሪቶ',
     price: 230,
     description: 'በድንች፣ አቮካዶ፣ እንቁላል እና አትክልት የተሞላ ትኩስና እና ጣፋጭ ቡሪቶ።',
+    descriptionEn: 'A fresh and delicious burrito filled with potatoes, avocado, egg, and vegetables.',
     ingredients: ['ቂጣ', 'ድንች', 'አቮካዶ', 'እንቁላል', 'የበሰሉ አትክልቶች'],
     allergens: ['ግሉተን (ቂጣ)', 'እንቁላል'],
     calories: 600,
@@ -45,6 +47,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     amharicName: 'እስፔሻል በሪቶ',
     price: 300,
     description: 'ልዩ ጣዕም የሚፈልጉ ሰዎች ምርጫ፤ የበሬ ሥጋ፣ አይብ፣ አቮካዶ፣ እንቁላል፣ የተጠበሱ ድንች እና ፈላፍል የተዋሃዱበት ልዩ ቡሪቶ።',
+    descriptionEn: 'The ultimate burrito for those who want bold flavour — beef, cheese, avocado, egg, fried potatoes and falafel all in one.',
     ingredients: ['ቂጣ', 'የተፈጨ ሥጋ', 'እንቁላል', 'ድንች', 'አቮካዶ', 'አይብ', 'ፈላፍል'],
     allergens: ['ግሉተን (ቂጣ)', 'እንቁላል', 'ወተት (አይብ)', 'ሶያ/ባቄላ (ፈላፍል)'],
     calories: 950,
@@ -56,10 +59,11 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
 
   {
     id: 'ff-3',
-    name: 'Pasta • ፓስታ',
+    name: 'Pasta',
     amharicName: 'ፓስታ',
     price: 100,
     description: 'ፓስታ በቲማቲም ሶስ፣ በጣዕም የተሞላ እና ግሩም ጣዕም ያለው ፓስታ።',
+    descriptionEn: 'Pasta in a rich tomato sauce — full of flavour with a perfect finish.',
     ingredients: ['ፓስታ', 'ቲማቲም', 'በርበሬ', 'ነጭ ሽንኩርት'],
     allergens: ['ግሉተን (ፓስታ)'],
     calories: 450,
@@ -75,7 +79,8 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
   //   name: 'My New Dish',
   //   amharicName: 'አዲስ ምግብ',
   //   price: 150,
-  //   description: 'Short description here.',
+  //   description: 'የአማርኛ መግለጫ።',
+  //   descriptionEn: 'English description here.',
   //   ingredients: ['ingredient 1', 'ingredient 2'],
   //   allergens: ['allergen 1'],
   //   calories: 500,

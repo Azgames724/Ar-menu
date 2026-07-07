@@ -8,6 +8,7 @@ import {
 import { MENU_DATA, MenuItem } from './data/menu';
 import ARViewer from './components/ARViewer';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useLanguage } from './lib/language';
 
 interface UserReview {
   id: string;
@@ -19,6 +20,9 @@ interface UserReview {
 }
 
 function MenuHome() {
+  const { lang, toggle } = useLanguage();
+  const am = lang === 'am';
+
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [activeTab, setActiveTab] = useState<'home' | 'menu' | 'social'>('home');
@@ -281,8 +285,18 @@ function MenuHome() {
               </div>
             </div>
 
-            {/* Header action button for Search and Menu */}
+            {/* Header action button for Search, Language toggle, and Menu */}
             <div className="flex items-center gap-1.5">
+              <button
+                onClick={toggle}
+                className="h-8 px-2.5 rounded-full bg-white border border-neutral-100 flex items-center gap-1 active:scale-95 transition-all shadow-md text-[9px] font-black tracking-widest"
+                title="Switch language"
+              >
+                <span className={am ? 'text-[#EA580C]' : 'text-neutral-400'}>አማ</span>
+                <span className="text-neutral-300">|</span>
+                <span className={!am ? 'text-[#EA580C]' : 'text-neutral-400'}>EN</span>
+              </button>
+
               <button 
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className="w-10 h-10 rounded-full bg-white border border-neutral-100 flex items-center justify-center active:scale-95 transition-all shadow-md relative text-neutral-800"
@@ -315,7 +329,7 @@ function MenuHome() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search wraps, burritos, ingredients..."
+                    placeholder={am ? 'ምግብ ፈልግ...' : 'Search wraps, burritos, ingredients...'}
                     className="w-full bg-white border border-orange-200 text-xs py-3 pl-10 pr-8 rounded-2xl outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:bg-white text-brand-black font-semibold transition-all"
                   />
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-orange-500" size={14} />
@@ -350,26 +364,26 @@ function MenuHome() {
                     onClick={() => { setActiveCategory('All'); setIsQuickMenuOpen(false); setActiveTab('menu'); }}
                     className={`w-full text-left text-xs font-bold py-1.5 px-2 rounded-lg transition-colors ${activeCategory === 'All' ? 'bg-orange-50 text-orange-600' : 'hover:bg-neutral-55 text-neutral-700 hover:bg-neutral-50'}`}
                   >
-                    All Culinary Items
+                    {am ? 'ሁሉም ምግቦች' : 'All Items'}
                   </button>
                   <button 
                     onClick={() => { setActiveCategory('FastFood'); setIsQuickMenuOpen(false); setActiveTab('menu'); }}
                     className={`w-full text-left text-xs font-bold py-1.5 px-2 rounded-lg transition-colors ${activeCategory === 'FastFood' ? 'bg-orange-50 text-orange-600' : 'hover:bg-neutral-55 text-neutral-700 hover:bg-neutral-50'}`}
                   >
-                    Fast Food Dishes
+                    {am ? 'ፈጣን ምግቦች' : 'Fast Food'}
                   </button>
                   <button 
                     onClick={() => { setActiveCategory('main dish'); setIsQuickMenuOpen(false); setActiveTab('menu'); }}
                     className={`w-full text-left text-xs font-bold py-1.5 px-2 rounded-lg transition-colors ${activeCategory === 'main dish' ? 'bg-orange-50 text-orange-600' : 'hover:bg-neutral-55 text-neutral-700 hover:bg-neutral-50'}`}
                   >
-                    Main Course Dishes
+                    {am ? 'ዋና ምግቦች' : 'Main Dishes'}
                   </button>
                   <div className="pt-2 border-t border-neutral-50 flex justify-between">
                     <button 
                       onClick={() => { setActiveTab('social'); setIsQuickMenuOpen(false); }}
                       className="text-[9px] font-black text-amber-700 uppercase"
                     >
-                      Customer Reviews
+                      {am ? 'ግምገማዎች' : 'Reviews'}
                     </button>
                   </div>
                 </div>
@@ -413,13 +427,13 @@ function MenuHome() {
                   <div className="flex justify-between items-center px-1">
                     <h2 className="text-sm font-black text-brand-black uppercase tracking-wider flex items-center gap-1.5 font-ethiopic text-[#1E1B18]">
                       <span className="text-[#EA580C] text-lg">✦</span>
-                      <span>የደንበኞች ምርጫ</span>
+                      <span>{am ? 'የደንበኞች ምርጫ' : "Customers' Choice"}</span>
                     </h2>
                     <button 
                       onClick={() => { setActiveTab('menu'); setActiveCategory('All'); }}
                       className="text-[10px] text-[#EA580C] hover:text-orange-700 font-extrabold uppercase tracking-widest"
                     >
-                      VIEW MENU
+                      {am ? 'ምናሌ ይመልከቱ' : 'VIEW MENU'}
                     </button>
                   </div>
 
@@ -454,10 +468,10 @@ function MenuHome() {
 
                           <div className="space-y-1.5 mt-4 text-center">
                             <p className="text-[9px] text-[#A28A76] tracking-widest uppercase font-extrabold font-ethiopic">
-                              {item.amharicCategory || 'ፈጣን ምግቦች'}
+                              {am ? (item.amharicCategory || 'ፈጣን ምግቦች') : (item.category === 'FastFood' ? 'Fast Food' : 'Main Dish')}
                             </p>
                             <h4 className="text-sm font-black text-[#1E1B18] font-ethiopic mt-1 line-clamp-1 h-5 group-hover:text-[#EA580C] transition-colors">
-                              {item.amharicName || item.name}
+                              {am ? (item.amharicName || item.name) : item.name}
                             </h4>
                             <div className="mt-2">
                               <span className="inline-block bg-[#FEFBF0] text-neutral-800 font-extrabold text-xs px-4 py-1.5 rounded-full border border-amber-100/40">
@@ -475,7 +489,7 @@ function MenuHome() {
                             className="mt-3.5 w-full bg-white border border-orange-200 text-[#EA580C] hover:bg-orange-50 hover:border-orange-300 transition-all text-[9.5px] font-black uppercase tracking-wider py-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-sm"
                           >
                             <span className="text-[#EA580C] text-xs">✦</span>
-                            <span>INSPECT AR 3D</span>
+                            <span>{am ? 'AR 3D ይመልከቱ' : 'INSPECT AR 3D'}</span>
                           </button>
                         </div>
                       );
@@ -488,7 +502,7 @@ function MenuHome() {
                   <div className="flex justify-between items-center px-1">
                     <h2 className="text-sm font-black text-brand-black uppercase tracking-wider flex items-center gap-1.5 font-ethiopic text-[#1E1B18]">
                       <span className="text-[#EA580C] text-lg">✦</span>
-                      <span>የቤቱ እሰፔሻል</span>
+                      <span>{am ? 'የቤቱ እሰፔሻል' : 'House Specials'}</span>
                     </h2>
                   </div>
 
@@ -523,10 +537,10 @@ function MenuHome() {
 
                           <div className="space-y-1.5 mt-4 text-center">
                             <p className="text-[9px] text-[#A28A76] tracking-widest uppercase font-extrabold font-ethiopic">
-                              {item.amharicCategory || 'የቤቱ እሰፔሻል'}
+                              {am ? (item.amharicCategory || 'የቤቱ እሰፔሻል') : (item.category === 'FastFood' ? 'Fast Food' : 'Main Dish')}
                             </p>
                             <h4 className="text-sm font-black text-[#1E1B18] font-ethiopic mt-1 line-clamp-1 h-5 group-hover:text-[#EA580C] transition-colors">
-                              {item.amharicName || item.name}
+                              {am ? (item.amharicName || item.name) : item.name}
                             </h4>
                             <div className="mt-2">
                               <span className="inline-block bg-[#FEFBF0] text-neutral-800 font-extrabold text-xs px-4 py-1.5 rounded-full border border-amber-100/40">
@@ -544,7 +558,7 @@ function MenuHome() {
                             className="mt-3.5 w-full bg-white border border-orange-200 text-[#EA580C] hover:bg-orange-50 hover:border-orange-300 transition-all text-[9.5px] font-black uppercase tracking-wider py-2.5 rounded-xl flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-sm"
                           >
                             <span className="text-[#EA580C] text-xs">✦</span>
-                            <span>INSPECT AR 3D</span>
+                            <span>{am ? 'AR 3D ይመልከቱ' : 'INSPECT AR 3D'}</span>
                           </button>
                         </div>
                       );
@@ -565,8 +579,8 @@ function MenuHome() {
                 className="space-y-6 p-5"
               >
                 <div>
-                  <h2 className="text-2xl font-black text-brand-black font-heading">Our Digital Menu</h2>
-                  <p className="text-xs text-neutral-500">Tap any item to inspect its authentic fully-interactive 3D model, nutritional metrics & ingredients.</p>
+                  <h2 className="text-2xl font-black text-brand-black font-heading">{am ? 'ዲጂታል ምናሌ' : 'Our Digital Menu'}</h2>
+                  <p className="text-xs text-neutral-500">{am ? 'ማንኛውም ምግብ ነካ ብሎ 3D ሞዴሉን ይመልከቱ።' : 'Tap any item to inspect its authentic fully-interactive 3D model, nutritional metrics & ingredients.'}</p>
                 </div>
 
                 {/* Filter chip category tabs */}
@@ -581,7 +595,9 @@ function MenuHome() {
                           : 'bg-white text-neutral-600 border border-neutral-100 hover:border-orange-200'
                       }`}
                     >
-                      {category === 'All' ? 'All Items' : category === 'FastFood' ? 'Fast Food' : 'Main Dishes'}
+                      {am
+                        ? (category === 'All' ? 'ሁሉም' : category === 'FastFood' ? 'ፈጣን ምግቦች' : 'ዋና ምግቦች')
+                        : (category === 'All' ? 'All Items' : category === 'FastFood' ? 'Fast Food' : 'Main Dishes')}
                     </button>
                   ))}
                 </div>
@@ -627,10 +643,10 @@ function MenuHome() {
                         <div className="space-y-1 mt-3.5 text-center flex-1 flex flex-col justify-between">
                           <div>
                             <span className="text-[8px] uppercase tracking-widest font-black text-orange-600 block font-ethiopic">
-                              {item.amharicCategory || item.category}
+                              {am ? (item.amharicCategory || item.category) : (item.category === 'FastFood' ? 'Fast Food' : 'Main Dish')}
                             </span>
                             <h3 className="font-extrabold text-xs text-brand-black line-clamp-2 leading-tight font-heading group-hover:text-brand-orange transition-colors px-0.5 font-ethiopic">
-                              {item.amharicName || item.name.split('•')[0].trim()}
+                              {am ? (item.amharicName || item.name) : item.name.split('•')[0].trim()}
                             </h3>
                           </div>
 
@@ -643,7 +659,7 @@ function MenuHome() {
 
                         <button className="mt-3.5 w-full bg-orange-50 border border-orange-100 group-hover:bg-brand-orange group-hover:text-white transition-all text-brand-orange text-[9px] font-black uppercase tracking-wider py-1.5 rounded-xl flex items-center justify-center gap-1">
                           <Sparkles size={10} fill="currentColor" />
-                          <span>Inspect</span>
+                          <span>{am ? 'ይመልከቱ' : 'Inspect'}</span>
                         </button>
                       </div>
                     );
@@ -937,7 +953,7 @@ function MenuHome() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-baseline gap-4">
                     <h1 className="text-2xl font-black text-[#1E1B18] leading-tight font-heading font-ethiopic">
-                      {selectedItem.amharicName || selectedItem.name.split('•')[0].trim()}
+                      {am ? (selectedItem.amharicName || selectedItem.name) : selectedItem.name.split('•')[0].trim()}
                     </h1>
                     <span className="text-xl font-black tracking-tight text-[#EA580C] text-nowrap font-ethiopic">
                       {(typeof selectedItem.price === 'number' ? selectedItem.price : parseFloat(selectedItem.price as any) || 0).toFixed(2)} Br
@@ -950,7 +966,7 @@ function MenuHome() {
                   </div>
 
                   <p className="text-xs text-neutral-600 leading-relaxed font-semibold bg-white p-4 rounded-2xl border border-orange-100/30">
-                    {selectedItem.description}
+                    {am ? selectedItem.description : (selectedItem.descriptionEn || selectedItem.description)}
                   </p>
                 </div>
 
@@ -987,7 +1003,7 @@ function MenuHome() {
                 {Array.isArray(selectedItem.ingredients) && selectedItem.ingredients.length > 0 && (
                   <div className="space-y-2.5">
                     <h4 className="text-[9px] uppercase tracking-[0.2em] font-extrabold text-amber-850">
-                      Primary Sourced Ingredients
+                      {am ? 'ዋና ግብዓቶች' : 'Primary Sourced Ingredients'}
                     </h4>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedItem.ingredients.map(ing => (
@@ -1006,7 +1022,7 @@ function MenuHome() {
                   onClick={() => setSelectedItem(null)}
                   className="w-full bg-brand-orange hover:bg-orange-700 text-white font-black uppercase tracking-[0.15em] text-[10px] py-4 rounded-2xl transition-all shadow-md active:scale-95 cursor-pointer"
                 >
-                  Close 3D Showcase
+                  {am ? '3D ዝጋ' : 'Close 3D Showcase'}
                 </button>
               </div>
 
