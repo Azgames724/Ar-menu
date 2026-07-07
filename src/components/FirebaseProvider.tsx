@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 
 interface AuthContextType {
   user: {
@@ -16,44 +17,64 @@ interface AuthContextType {
   signOut: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>({ 
-  user: null, 
-  loading: true, 
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true,
   isAdmin: false,
   isLocalMode: false,
   setLocalAdminSession: () => {},
-  signOut: async () => {}
+  signOut: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
 
+const ADMIN_EMAIL = 'abeniship13@gmail.com';
+
 export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<any | null>({
-    uid: 'local-admin',
-    email: 'admin@dagi.com',
-    displayName: 'Dagi Creator',
-    photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop',
-  });
-  const [loading, setLoading] = useState(false);
-  const [isLocalMode, setIsLocalMode] = useState(true);
-
-  const setLocalAdminSession = (active: boolean) => {
-    // Keep as local admin
-  };
-
-  const signOut = async () => {
-    // No authentication restrictions, do not sign out
-  };
+  const [user, setUser] = useState<AuthContextType['user']>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Authenticated state is stable
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
+      if (firebaseUser) {
+        setUser({
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+        });
+
+        // Check admin status: hardcoded owner email OR presence in /admins collection
+        let admin = firebaseUser.email === ADMIN_EMAIL && firebaseUser.emailVerified;
+        if (!admin) {
+          try {
+            const adminDoc = await getDoc(doc(db, 'admins', firebaseUser.uid));
+            admin = adminDoc.exists();
+          } catch {
+            admin = false;
+          }
+        }
+        setIsAdmin(admin);
+      } else {
+        setUser(null);
+        setIsAdmin(false);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  // Admin access is permanently available
-  const isAdmin = true;
+  const signOut = async () => {
+    await firebaseSignOut(auth);
+  };
+
+  // setLocalAdminSession is a no-op — kept for interface compatibility
+  const setLocalAdminSession = (_active: boolean) => {};
 
   return (
-    <AuthContext.Provider value={{ user, loading, isAdmin, isLocalMode, setLocalAdminSession, signOut }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin, isLocalMode: false, setLocalAdminSession, signOut }}>
       {!loading && children}
     </AuthContext.Provider>
   );
