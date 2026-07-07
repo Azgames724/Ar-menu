@@ -8,8 +8,6 @@ import {
 import { MENU_DATA, MenuItem } from './data/menu';
 import ARViewer from './components/ARViewer';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { db } from './lib/firebase';
 
 interface UserReview {
   id: string;
@@ -24,7 +22,6 @@ function MenuHome() {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [activeTab, setActiveTab] = useState<'home' | 'menu' | 'social'>('home');
-  const [firestoreDishes, setFirestoreDishes] = useState<MenuItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -143,38 +140,8 @@ function MenuHome() {
     return () => clearInterval(interval);
   }, [arAutoSpin]);
   
-  useEffect(() => {
-    const q = query(collection(db, 'dishes'), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const dishes = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as MenuItem[];
-      setFirestoreDishes(dishes);
-    }, (error) => {
-      console.warn('Firestore loading unavailable, using static fallback:', error);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  // Merge hardcoded data with any firestore data
-  const mergedDishes: MenuItem[] = [];
-  firestoreDishes.forEach((item) => {
-    mergedDishes.push(item);
-  });
-  
-  MENU_DATA.forEach((item) => {
-    const isDuplicate = mergedDishes.some(
-      (d) => d.id === item.id || d.name.toLowerCase().trim() === item.name.toLowerCase().trim()
-    );
-    if (!isDuplicate) {
-      mergedDishes.push(item);
-    }
-  });
-
-  // Automatically map legacy glTF master branch URLs to main sample branch 
-  const allDishes = mergedDishes.map((item) => {
+  // Automatically map legacy glTF master branch URLs to main sample branch
+  const allDishes = MENU_DATA.map((item) => {
     let modelUrl = item.modelUrl || '';
     if (modelUrl.includes('glTF-Sample-Models/master/2.0/')) {
       modelUrl = modelUrl.replace(
