@@ -27,6 +27,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
 
   {
     id: 'ff-1',
+    name: 'Tasty Burger with French Fries',
     amharicName: 'ጣፋጭ በርገር ከጥብስ ድንች ጋር',
     price: 350,
     description: 'ጭማቂ ያለው የበሬ ሥጋ በርገር ከትኩስ አትክልቶች፣ አይብ እና በወርቃማ የተጠበሰ ድንች ጋር የሚቀርብ ጣፋጭ ምግብ።',
@@ -37,11 +38,12 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     category: 'Burger',
     amharicCategory: 'በርገር',
     image: 'bur.jpg',          // ← filename in public/qhom/
-    model: 'tasty_burger_with_fries_1783589138437.glb',          // ← filename in public/qhom/
+    model: 'burnt_egg_burrito.glb',          // ← filename in public/qhom/
   },
 
   {
     id: 'ff-2',
+    name: 'Roasted Chicken',
     amharicName: 'የተጠበሰ ዶሮ',
     price: 2000,
     description: 'በልዩ ቅመማ ቅመሞች የተቀመመ እና በትክክል የተጠበሰ ለስላሳ ዶሮ ከጎን ምግብ ጋር የሚቀርብ።',
@@ -57,6 +59,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
 
   {
     id: 'ff-3',
+    name: 'Pizza',
     amharicName: 'ፒዛ',
     price: 450,
     description: 'በትኩስ ሊጥ፣ የቲማቲም ሶስ፣ የቀለጠ አይብ እና የተመረጡ ጣፋጭ ንጥረ ነገሮች የተዘጋጀ ጣፋጭ ፒዛ።',
@@ -67,7 +70,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     category: 'Pizza',
     amharicCategory: 'ፒዛ',
     image: 'piz.jpg',            // ← filename in public/qhom/
-    model: 'textured_mesh (1).glb',            // ← filename in public/qhom/
+    model: 'textured_mesh_1.glb',            // ← filename in public/qhom/
   },
 
   // ── TEMPLATE — copy this block to add a new item ──────────
