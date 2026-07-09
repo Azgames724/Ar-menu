@@ -38,7 +38,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     category: 'Burger',
     amharicCategory: 'በርገር',
     image: 'borrito.jpg',          // ← filename in public/qhom/
-    model: 'burrito.glb',          // ← filename in public/qhom/
+    model: 'tasty_burger_with_fries_1783589138437.glb',          // ← filename in public/qhom/
   },
 
   {
@@ -54,7 +54,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     category: 'Chicken',
     amharicCategory: 'ችኪን',
     image: 'special borrito.jpg',  // ← filename in public/qhom/
-    model: 'burnt_egg_burrito.glb', // ← filename in public/qhom/
+    model: '', // ← filename in public/qhom/
   },
 
   {
