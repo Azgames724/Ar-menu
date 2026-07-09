@@ -12,8 +12,27 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static assets from public/qhom (3D models and images)
-app.use('/qhom', express.static(path.join(process.cwd(), 'public', 'qhom')));
+// Serve static assets from public/qhom (3D models and images).
+// 3D dish models (.glb) can be up to ~100MB, so this is tuned so large
+// files stream smoothly instead of loading as one giant blocking response:
+//  - Range requests (byte-range) are enabled so the browser/model-viewer can
+//    fetch the file in chunks and report incremental progress instead of
+//    stalling until the whole 100MB is in memory.
+//  - Aggressive immutable caching means a dish's model is only downloaded
+//    once per browser; reopening the same dish later is instant.
+app.use('/qhom', express.static(path.join(process.cwd(), 'public', 'qhom'), {
+  acceptRanges: true,
+  maxAge: '365d',
+  immutable: true,
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.glb') || filePath.endsWith('.gltf')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.setHeader('Accept-Ranges', 'bytes');
+    }
+  },
+}));
 
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {

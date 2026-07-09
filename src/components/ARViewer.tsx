@@ -28,6 +28,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [arSupported, setArSupported] = useState(false);
   const [currentPoster, setCurrentPoster] = useState(poster);
+  const progressRef = useRef(0);
 
   useEffect(() => {
     const imageFallbacks: Record<string, string> = {
@@ -67,13 +68,44 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   }, [isExpanded]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!isLoaded && !error) {
-        setShowRetry(true);
-      }
-    }, 15000); // 15 seconds timeout
+    // Reset to neutral scale while the new model loads so old dimensions
+    // never leak into the next dish's sizing. This must run (and clear
+    // progressRef) BEFORE the stall-detection effect below reads it, so
+    // it's declared first — effects run in declaration order on the same
+    // src change, ensuring the stall tracker always starts from a clean
+    // baseline for the newly requested model instead of the previous
+    // dish's leftover progress value.
+    setBaseScale(1);
+    setScale(1);
+    progressRef.current = 0;
+  }, [src]);
 
-    return () => clearTimeout(timer);
+  useEffect(() => {
+    // Dish models can be as large as ~100MB. A 15s "stuck" timeout was
+    // tuned for small demo assets and would fire false-positive retries on
+    // slower connections mid-download of a large file. Only flag it as
+    // stuck if progress hasn't advanced in a while, and give it much more
+    // runway overall.
+    let lastProgress = progressRef.current;
+    let stalledFor = 0;
+    const STALL_CHECK_MS = 2000;
+    const MAX_STALL_MS = 45000; // no progress for 45s straight = actually stuck
+
+    const interval = setInterval(() => {
+      if (isLoaded || error) return;
+      const current = progressRef.current;
+      if (current > lastProgress) {
+        lastProgress = current;
+        stalledFor = 0;
+      } else {
+        stalledFor += STALL_CHECK_MS;
+        if (stalledFor >= MAX_STALL_MS) {
+          setShowRetry(true);
+        }
+      }
+    }, STALL_CHECK_MS);
+
+    return () => clearInterval(interval);
   }, [isLoaded, error, src]);
 
   const handleRetry = () => {
@@ -81,6 +113,19 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
     setIsLoaded(false);
     setError(false);
     setProgress(0);
+    progressRef.current = 0;
+    // Force model-viewer to actually re-request the asset rather than
+    // just resetting our own UI state around a load that may never
+    // progress further — clearing then restoring `src` retriggers the
+    // fetch/parse pipeline for the same model.
+    const viewer = viewerRef.current;
+    if (viewer) {
+      const currentSrc = viewer.src || src;
+      viewer.src = '';
+      requestAnimationFrame(() => {
+        viewer.src = currentSrc;
+      });
+    }
   };
 
   const enterFullscreen = () => {
@@ -93,13 +138,6 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
       }
     }
   };
-
-  useEffect(() => {
-    // Reset to neutral scale while the new model loads so old dimensions
-    // never leak into the next dish's sizing.
-    setBaseScale(1);
-    setScale(1);
-  }, [src]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
@@ -153,7 +191,9 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         setIsLoaded(true); // Stop loading state on error
       };
       const handleProgress = (event: any) => {
-        setProgress(Math.round(event.detail.totalProgress * 100));
+        const pct = Math.round(event.detail.totalProgress * 100);
+        setProgress(pct);
+        progressRef.current = pct;
       };
       
       if (viewer.loaded) {
@@ -311,6 +351,8 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         shadow-intensity="1.5"
         exposure="1.0"
         shadow-softness="0.5"
+        power-preference="high-performance"
+        reveal="auto"
         scale={`${scale * baseScale} ${scale * baseScale} ${scale * baseScale}`}
         loading="eager"
         interaction-prompt="auto"
