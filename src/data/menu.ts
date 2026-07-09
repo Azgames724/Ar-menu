@@ -27,14 +27,13 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
 
   {
     id: 'ff-1',
-    name: 'Dagi Normal Burrito',
-    amharicName: 'በሪቶ',
-    price: 230,
-    description: 'በድንች፣ አቮካዶ፣ እንቁላል እና አትክልት የተሞላ ትኩስና እና ጣፋጭ ቡሪቶ።',
-    descriptionEn: 'A fresh and delicious burrito filled with potatoes, avocado, egg, and vegetables.',
-    ingredients: ['ቂጣ', 'ድንች', 'አቮካዶ', 'እንቁላል', 'የበሰሉ አትክልቶች'],
-    allergens: ['ግሉተን (ቂጣ)', 'እንቁላል'],
-    calories: 600,
+    amharicName: 'ጣፋጭ በርገር ከጥብስ ድንች ጋር',
+    price: 350,
+    description: 'ጭማቂ ያለው የበሬ ሥጋ በርገር ከትኩስ አትክልቶች፣ አይብ እና በወርቃማ የተጠበሰ ድንች ጋር የሚቀርብ ጣፋጭ ምግብ።',
+    descriptionEn: 'A juicy beef burger served with fresh vegetables, cheese, and crispy golden French fries.',
+    ingredients: ['የበርገር ዳቦ', 'የበሬ ሥጋ', 'አይብ', 'ሰላጣ', 'ቲማቲም', 'ሽንኩርት', 'ጥብስ ድንች'],
+    allergens: ['ግሉተን (የበርገር ዳቦ)', 'ወተት (አይብ)'],
+    calories: 850,
     category: 'Burger',
     amharicCategory: 'በርገር',
     image: 'borrito.jpg',          // ← filename in public/qhom/
