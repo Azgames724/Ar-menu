@@ -58,14 +58,13 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
 
   {
     id: 'ff-3',
-    name: 'Pasta',
-    amharicName: 'ፓስታ',
-    price: 100,
-    description: 'ፓስታ በቲማቲም ሶስ፣ በጣዕም የተሞላ እና ግሩም ጣዕም ያለው ፓስታ።',
-    descriptionEn: 'Pasta in a rich tomato sauce — full of flavour with a perfect finish.',
-    ingredients: ['ፓስታ', 'ቲማቲም', 'በርበሬ', 'ነጭ ሽንኩርት'],
-    allergens: ['ግሉተን (ፓስታ)'],
-    calories: 450,
+    amharicName: 'ፒዛ',
+    price: 450,
+    description: 'በትኩስ ሊጥ፣ የቲማቲም ሶስ፣ የቀለጠ አይብ እና የተመረጡ ጣፋጭ ንጥረ ነገሮች የተዘጋጀ ጣፋጭ ፒዛ።',
+    descriptionEn: 'A delicious pizza made with fresh dough, rich tomato sauce, melted cheese, and carefully selected toppings.',
+    ingredients: ['የፒዛ ሊጥ', 'የቲማቲም ሶስ', 'አይብ', 'ቲማቲም', 'ኦሊቭ', 'ቃሪያ', 'ሽንኩርት'],
+    allergens: ['ግሉተን (የፒዛ ሊጥ)', 'ወተት (አይብ)'],
+    calories: 950,
     category: 'Pizza',
     amharicCategory: 'ፒዛ',
     image: 'pasta.jpg',            // ← filename in public/qhom/
