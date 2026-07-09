@@ -190,10 +190,10 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   return (
     <div 
       id="3d-viewer-container"
-      className={`relative w-full rounded-3xl overflow-hidden backdrop-blur-md border border-neutral-200/50 shadow-inner group transition-all duration-500 bg-neutral-50/80 ${isExpanded ? 'fixed inset-0 z-[100] rounded-none h-full w-full bg-neutral-900 text-white' : 'h-[350px] md:h-[500px]'}`}
+      className={`relative w-full rounded-3xl overflow-hidden backdrop-blur-md border border-[#3A2E24] shadow-inner group transition-all duration-500 bg-[#181310] ${isExpanded ? 'fixed inset-0 z-[100] rounded-none h-full w-full bg-neutral-900 text-white' : 'h-[350px] md:h-[500px]'}`}
     >
       {!isLoaded && !error && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 z-10 backdrop-blur-sm">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#181310]/70 z-10 backdrop-blur-sm">
           <motion.div 
             animate={{ 
               scale: [1, 1.2, 1],
@@ -204,7 +204,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
           />
 
           <div className="relative z-20 flex flex-col items-center">
-            <div className="w-48 h-1 bg-aura-dark/5 rounded-full overflow-hidden mb-6">
+            <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden mb-6">
               <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
@@ -227,7 +227,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
                   key={getLoadingMessage(progress)}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="block text-[10px] uppercase tracking-[0.2em] text-aura-dark/60 font-bold"
+                  className="block text-[10px] uppercase tracking-[0.2em] text-[#C9B8A3] font-bold"
                 >
                   {getLoadingMessage(progress)}
                 </motion.span>
@@ -330,7 +330,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
       <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-30">
         <button 
           onClick={toggleExpand}
-          className={`px-3 py-1.5 rounded-full border border-neutral-200/40 transition-all backdrop-blur-sm flex items-center gap-2 ${isExpanded ? 'bg-aura-gold text-neutral-900 border-aura-gold' : 'bg-white/80 hover:bg-white text-aura-dark/70'}`}
+          className={`px-3 py-1.5 rounded-full border border-[#3A2E24] transition-all backdrop-blur-sm flex items-center gap-2 ${isExpanded ? 'bg-aura-gold text-neutral-900 border-aura-gold' : 'bg-[#231C17]/90 hover:bg-[#2A2119] text-[#C9B8A3]'}`}
         >
           {isExpanded ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
           <span className="text-[10px] font-bold uppercase tracking-widest">
@@ -341,7 +341,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         <button 
           id="fullscreen-toggle"
           onClick={enterFullscreen}
-          className="bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-neutral-200/40 hover:bg-white transition-colors text-aura-dark/70"
+          className="bg-[#231C17]/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-[#3A2E24] hover:bg-[#2A2119] transition-colors text-[#C9B8A3]"
         >
           <span className="text-[10px] font-bold uppercase tracking-widest">Native Fullscreen</span>
         </button>
