@@ -54,7 +54,8 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     category: 'Chicken',
     amharicCategory: 'ችኪን',
     image: 'special borrito.jpg',  // ← filename in public/qhom/
-    model: '', // ← filename in public/qhom/
+    model: 'roasted_chicken_1783589138435.glb
+', // ← filename in public/qhom/
   },
 
   {
