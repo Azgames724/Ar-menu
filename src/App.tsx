@@ -253,13 +253,15 @@ function MenuHome() {
           <div className="flex justify-between items-center">
             {/* Logo and Greeting */}
             <div className="flex items-center gap-2.5">
-              <div className="w-12 h-12 rounded-full bg-[#231C17] flex items-center justify-center shadow-md border border-[#3A2E24]">
-                <div 
-                  className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#EA580C] to-[#F59E0B] flex items-center justify-center text-white font-extrabold text-2xl border border-white/40 cursor-pointer active:scale-95 transition-transform"
-                  onClick={() => setActiveTab('home')}
-                >
-                  D
-                </div>
+              <div 
+                className="w-12 h-12 rounded-full bg-[#231C17] flex items-center justify-center shadow-md border border-[#3A2E24] overflow-hidden cursor-pointer active:scale-95 transition-transform p-0.5"
+                onClick={() => setActiveTab('home')}
+              >
+                <img
+                  src="/brand/moka-logo.png"
+                  alt="Moka Cafe"
+                  className="w-full h-full object-contain rounded-full"
+                />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1 font-ethiopic font-black text-xl tracking-tight leading-none">
