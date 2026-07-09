@@ -24,6 +24,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   const [progress, setProgress] = useState(0);
   const [showRetry, setShowRetry] = useState(false);
   const [scale, setScale] = useState(1);
+  const [baseScale, setBaseScale] = useState(1);
   const [isExpanded, setIsExpanded] = useState(false);
   const [arSupported, setArSupported] = useState(false);
   const [currentPoster, setCurrentPoster] = useState(poster);
@@ -94,11 +95,53 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
   };
 
   useEffect(() => {
+    // Reset to neutral scale while the new model loads so old dimensions
+    // never leak into the next dish's sizing.
+    setBaseScale(1);
+    setScale(1);
+  }, [src]);
+
+  useEffect(() => {
     const viewer = viewerRef.current;
+    const requestedSrc = src;
     if (viewer) {
       const handleLoad = () => {
+        // Guard against a stale 'load' firing (or the eager viewer.loaded
+        // check below running) for a previous src right as it's swapped —
+        // only trust dimensions/state that belong to the currently
+        // requested dish.
+        if (viewer.src !== requestedSrc) return;
+
         setIsLoaded(true);
         setError(false);
+
+        // "Smart" auto-fit: real GLB assets come in wildly inconsistent
+        // real-world scales (some modeled in cm, some in meters, some just
+        // exported at an arbitrary size). Rather than trusting the raw
+        // model scale, measure the loaded model's actual bounding box and
+        // normalize it to a realistic plated-dish footprint (~22cm across,
+        // like a dinner plate) so every dish appears table-sized both in
+        // the in-app 3D preview and when placed on a real table in AR.
+        try {
+          if (typeof viewer.getDimensions === 'function') {
+            const dims = viewer.getDimensions();
+            const footprint = Math.max(dims.x, dims.z) || Math.max(dims.x, dims.y, dims.z);
+            const TARGET_FOOTPRINT_METERS = 0.22;
+            if (footprint && footprint > 0.001) {
+              const factor = TARGET_FOOTPRINT_METERS / footprint;
+              // Clamp so a broken/degenerate bounding box can't produce an
+              // absurdly tiny or huge model.
+              setBaseScale(Math.min(4, Math.max(0.02, factor)));
+            } else {
+              setBaseScale(1);
+            }
+          }
+        } catch {
+          // If the viewer doesn't support getDimensions yet, fall back to
+          // the model's native scale rather than failing.
+          setBaseScale(1);
+        }
+
         if (viewer.canActivateAR) {
           setArSupported(true);
         } else {
@@ -257,7 +300,8 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         src={src}
         ar
         ar-modes="webxr scene-viewer quick-look"
-        ar-scale="auto"
+        ar-scale="fixed"
+        ar-placement="floor"
         provide-id
         poster={currentPoster}
         alt={alt}
@@ -267,7 +311,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         shadow-intensity="1.5"
         exposure="1.0"
         shadow-softness="0.5"
-        scale={`${scale} ${scale} ${scale}`}
+        scale={`${scale * baseScale} ${scale * baseScale} ${scale * baseScale}`}
         loading="eager"
         interaction-prompt="auto"
         interpolation-decay="200"
