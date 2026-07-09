@@ -18,7 +18,7 @@ export interface MenuItem {
   calories: number;
   modelUrl: string;
   imageUrl: string;
-  category: 'FastFood' | 'main dish';
+  category: 'Chicken' | 'Burger' | 'Pizza';
   amharicCategory: string;
 }
 
@@ -35,8 +35,8 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     ingredients: ['ቂጣ', 'ድንች', 'አቮካዶ', 'እንቁላል', 'የበሰሉ አትክልቶች'],
     allergens: ['ግሉተን (ቂጣ)', 'እንቁላል'],
     calories: 600,
-    category: 'FastFood',
-    amharicCategory: 'ፈጣን ምግቦች',
+    category: 'Burger',
+    amharicCategory: 'በርገር',
     image: 'borrito.jpg',          // ← filename in public/qhom/
     model: 'burrito.glb',          // ← filename in public/qhom/
   },
@@ -51,8 +51,8 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     ingredients: ['ቂጣ', 'የተፈጨ ሥጋ', 'እንቁላል', 'ድንች', 'አቮካዶ', 'አይብ', 'ፈላፍል'],
     allergens: ['ግሉተን (ቂጣ)', 'እንቁላል', 'ወተት (አይብ)', 'ሶያ/ባቄላ (ፈላፍል)'],
     calories: 950,
-    category: 'FastFood',
-    amharicCategory: 'ፈጣን ምግቦች',
+    category: 'Chicken',
+    amharicCategory: 'ችኪን',
     image: 'special borrito.jpg',  // ← filename in public/qhom/
     model: 'burnt_egg_burrito.glb', // ← filename in public/qhom/
   },
@@ -67,8 +67,8 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     ingredients: ['ፓስታ', 'ቲማቲም', 'በርበሬ', 'ነጭ ሽንኩርት'],
     allergens: ['ግሉተን (ፓስታ)'],
     calories: 450,
-    category: 'main dish',
-    amharicCategory: 'የቤቱ እሰፔሻል',
+    category: 'Pizza',
+    amharicCategory: 'ፒዛ',
     image: 'pasta.jpg',            // ← filename in public/qhom/
     model: 'ertib.glb',            // ← filename in public/qhom/
   },
@@ -84,7 +84,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
   //   ingredients: ['ingredient 1', 'ingredient 2'],
   //   allergens: ['allergen 1'],
   //   calories: 500,
-  //   category: 'FastFood',                // 'FastFood' or 'main dish'
+  //   category: 'Chicken',                 // 'Chicken', 'Burger' or 'Pizza'
   //   amharicCategory: 'ፈጣን ምግቦች',
   //   image: 'my_photo.jpg',               // ← put this file in public/qhom/
   //   model: 'my_model.glb',              // ← put this file in public/qhom/
