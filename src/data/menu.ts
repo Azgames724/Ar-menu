@@ -42,16 +42,15 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
 
   {
     id: 'ff-2',
-    name: 'Dagi Special Burrito',
-    amharicName: 'እስፔሻል በሪቶ',
-    price: 300,
-    description: 'ልዩ ጣዕም የሚፈልጉ ሰዎች ምርጫ፤ የበሬ ሥጋ፣ አይብ፣ አቮካዶ፣ እንቁላል፣ የተጠበሱ ድንች እና ፈላፍል የተዋሃዱበት ልዩ ቡሪቶ።',
-    descriptionEn: 'The ultimate burrito for those who want bold flavour — beef, cheese, avocado, egg, fried potatoes and falafel all in one.',
-    ingredients: ['ቂጣ', 'የተፈጨ ሥጋ', 'እንቁላል', 'ድንች', 'አቮካዶ', 'አይብ', 'ፈላፍል'],
-    allergens: ['ግሉተን (ቂጣ)', 'እንቁላል', 'ወተት (አይብ)', 'ሶያ/ባቄላ (ፈላፍል)'],
-    calories: 950,
+    amharicName: 'የተጠበሰ ዶሮ',
+    price: 2000,
+    description: 'በልዩ ቅመማ ቅመሞች የተቀመመ እና በትክክል የተጠበሰ ለስላሳ ዶሮ ከጎን ምግብ ጋር የሚቀርብ።',
+    descriptionEn: 'Tender roasted chicken seasoned with special spices and perfectly cooked, served with a side dish.',
+    ingredients: ['ዶሮ', 'ነጭ ሽንኩርት', 'ቅመማ ቅመሞች', 'ቅቤ', 'ሎሚ', 'ጥብስ ድንች'],
+    allergens: ['ወተት (ቅቤ)'],
+    calories: 780,
     category: 'Chicken',
-    amharicCategory: 'ችኪን',
+    amharicCategory: 'ዶሮ',
     image: 'special borrito.jpg',  // ← filename in public/qhom/
     model: 'roasted_chicken_1783589138435.glb
 ', // ← filename in public/qhom/
