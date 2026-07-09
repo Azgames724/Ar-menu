@@ -36,7 +36,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     calories: 850,
     category: 'Burger',
     amharicCategory: 'በርገር',
-    image: 'borrito.jpg',          // ← filename in public/qhom/
+    image: 'bur.jpg',          // ← filename in public/qhom/
     model: 'tasty_burger_with_fries_1783589138437.glb',          // ← filename in public/qhom/
   },
 
@@ -51,7 +51,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     calories: 780,
     category: 'Chicken',
     amharicCategory: 'ዶሮ',
-    image: 'special borrito.jpg',  // ← filename in public/qhom/
+    image: 'chi.jpg',  // ← filename in public/qhom/
     model: 'roasted_chicken_1783589138435.glb
 ', // ← filename in public/qhom/
   },
@@ -67,7 +67,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     calories: 950,
     category: 'Pizza',
     amharicCategory: 'ፒዛ',
-    image: 'pasta.jpg',            // ← filename in public/qhom/
+    image: 'piz.jpg',            // ← filename in public/qhom/
     model: 'pizza_1783589138434.glb',            // ← filename in public/qhom/
   },
 
