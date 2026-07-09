@@ -80,6 +80,19 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
     progressRef.current = 0;
   }, [src]);
 
+  // Adjust camera framing automatically once the scale has been calculated and applied
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (viewer && isLoaded) {
+      const timer = setTimeout(() => {
+        if (typeof viewer.updateFraming === 'function') {
+          viewer.updateFraming();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [baseScale, isLoaded]);
+
   useEffect(() => {
     // Dish models can be as large as ~100MB. A 15s "stuck" timeout was
     // tuned for small demo assets and would fire false-positive retries on
@@ -354,6 +367,7 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         power-preference="high-performance"
         reveal="auto"
         scale={`${scale * baseScale} ${scale * baseScale} ${scale * baseScale}`}
+        bounds="tight"
         loading="eager"
         interaction-prompt="auto"
         interpolation-decay="200"
