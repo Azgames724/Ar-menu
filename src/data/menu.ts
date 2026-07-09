@@ -70,7 +70,7 @@ const dishes: Array<Omit<MenuItem, 'imageUrl' | 'modelUrl'> & { image: string; m
     category: 'Pizza',
     amharicCategory: 'ፒዛ',
     image: 'piz.jpg',            // ← filename in public/qhom/
-    model: 'textured_mesh_1.glb',            // ← filename in public/qhom/
+    model: 'textured_mesh (1).glb',            // ← filename in public/qhom/
   },
 
   // ── TEMPLATE — copy this block to add a new item ──────────
