@@ -47,7 +47,7 @@ function MenuHome() {
   const [challengeTimeLeft, setChallengeTimeLeft] = useState(900); // 15 mins = 900 seconds
   const [challengeStatus, setChallengeStatus] = useState<'idle' | 'playing' | 'won' | 'lost'>('idle');
   const [challengeChampions, setChallengeChampions] = useState<{name: string, time: string, date: string}[]>(() => {
-    const stored = localStorage.getItem('dagi_challenge_champions');
+    const stored = localStorage.getItem('moka_challenge_champions');
     if (stored) return JSON.parse(stored);
     return [
       { name: 'Abenezer G.', time: '11:24', date: 'June 12, 2026' },
@@ -59,47 +59,47 @@ function MenuHome() {
 
   // Social/review state
   const [reviews, setReviews] = useState<UserReview[]>(() => {
-    const stored = localStorage.getItem('dagi_customer_reviews');
+    const stored = localStorage.getItem('moka_customer_reviews');
     if (stored) return JSON.parse(stored);
     return [
       {
         id: 'rev-google-1',
-        name: 'Eyob Girma',
+        name: 'Yonas Solomon',
         rating: 5,
-        comment: 'Dagi has the absolute best chicken wraps in all of Addis Ababa! Incredibly juicy, served super hot with sweet & spicy awaze! Fast service which is perfect for groups.',
-        dishName: 'Dagi Special Wrap • ልዩ ዋፕ (Google Review)',
-        createdAt: '4 days ago'
+        comment: 'One of the most consistent fast-food spots in Addis Ababa. Their burgers are amazing, especially the special double burger. The service is incredibly fast, even when it is super crowded. A legendary place!',
+        dishName: 'Tasty Burger • ጣፋጭ በርገር (Google Review)',
+        createdAt: '2 days ago'
       },
       {
         id: 'rev-google-2',
-        name: 'Selamawit Tadesse (Local Guide)',
+        name: 'Kalkidan Ayele',
         rating: 5,
-        comment: 'The fastest fast food in town. You pull up with your car, pay, and receive your fresh, quality chicken wrap in literally 2 minutes. Consistent seasoning every time.',
-        dishName: 'Dagi Normal Wrap • መደበኛ ዋፕ (Google Review)',
-        createdAt: '1 week ago'
+        comment: 'Best burgers and french fries in town. They prepare it so fast, usually in less than 5 minutes. The space is always full and noisy, but the food is worth it every single time.',
+        dishName: 'Tasty Burger • ጣፋጭ በርገር (Google Review)',
+        createdAt: '4 days ago'
       },
       {
         id: 'rev-google-3',
-        name: 'Nahom Daniel',
+        name: 'Rediet Hailu (Local Guide)',
         rating: 5,
-        comment: 'Highly addictive double chicken wraps and folded beef pockets! Generous proportions, clean kitchen, and incredibly fast output.',
-        dishName: 'Dagi Special Wrap • ልዩ ዋፕ (Google Review)',
-        createdAt: '2 weeks ago'
+        comment: 'Moka Cafe is a classic. Their chicken burger and special pizza are top tier. Service is ultra-fast, and the prices are reasonable. Recommended for a quick and satisfying bite.',
+        dishName: 'Roasted Chicken • የተጠበሰ ዶሮ (Google Review)',
+        createdAt: '1 week ago'
       },
       {
         id: 'rev-google-4',
-        name: 'Hanna Solomon',
+        name: 'Michael Tsegaye',
         rating: 4,
-        comment: 'Love the quick service and the savory sauce. It is always crowded but they manage food prep extremely fast. A must-try spot!',
-        dishName: 'Dagi Normal Burrito • መደበኛ ቡሪቶ (Google Review)',
-        createdAt: '3 weeks ago'
+        comment: 'Highly recommended if you want delicious fast food without waiting. The beef burger is juicy and well-seasoned. The only downside is finding a parking spot or a table can be hard during lunch hours.',
+        dishName: 'Tasty Burger • ጣፋጭ በርገር (Google Review)',
+        createdAt: '2 weeks ago'
       },
       {
         id: 'rev-google-5',
-        name: 'Michael Belay',
+        name: 'Tsion Demeke',
         rating: 5,
-        comment: 'Delicious wraps loaded with fresh ingredients. Excellent value for money and outstanding taste experience.',
-        dishName: 'Dagi Normal Wrap • መደበኛ ዋፕ (Google Review)',
+        comment: 'Amazing pizza and burgers! The service is surprisingly fast and efficient. They have managed to maintain their taste and quality for years. A must-visit in Addis.',
+        dishName: 'Pizza • ፒዛ (Google Review)',
         createdAt: '1 month ago'
       }
     ];
@@ -109,11 +109,11 @@ function MenuHome() {
   const categories = ['All', 'Chicken', 'Burger', 'Pizza'];
 
   useEffect(() => {
-    localStorage.setItem('dagi_customer_reviews', JSON.stringify(reviews));
+    localStorage.setItem('moka_customer_reviews', JSON.stringify(reviews));
   }, [reviews]);
 
   useEffect(() => {
-    localStorage.setItem('dagi_challenge_champions', JSON.stringify(challengeChampions));
+    localStorage.setItem('moka_challenge_champions', JSON.stringify(challengeChampions));
   }, [challengeChampions]);
 
   useEffect(() => {
@@ -223,10 +223,10 @@ function MenuHome() {
     
     // Redirect instantly to Google Maps review page
     try {
-      window.open("https://www.google.com/search?kgmid=%2Fg%2F11z5pc764n&hl=en-ET&q=Dagi%20fast%20food&shem=epsd1%2Cltac%2Crimspwouohc&shndl=30&source=sh%2Fx%2Floc%2Fosrp%2Fm1%2F2&kgs=a10f07a17213e860", "_blank");
+      window.open("https://www.google.com/search?q=moka+cafe+-+%E1%88%9E%E1%8A%AB+%E1%8A%AB%E1%8D%8C+reviews&oq=moka+&gs_lcrp=EgZjaHJvbWUqBggDECMYJzIGCAAQRRg7MgYIARBFGDkyBggCEEUYOzIGCAMQIxgnMgYIBBAjGCcyBwgFEAAYgAQyBggGEEUYPTIGCAcQRRg9MgcICBAAGIAEMgcICRAAGIAEMgcIChAuGIAEMgcICxAAGIAEMgcIDBAAGIAEMgcIDRAAGIAEMgcIDHAAGIAE0gEINDQ3NWowajeoAhSwAgHxBekkmNipnOne&client=ms-android-zte-rvo2&sourceid=chrome-mobile&ie=UTF-8#ebo=2", "_blank");
     } catch (err) {
       console.warn("Popup blocked, fallback redirect:", err);
-      window.location.href = "https://www.google.com/search?kgmid=%2Fg%2F11z5pc764n&hl=en-ET&q=Dagi%20fast%20food&shem=epsd1%2Cltac%2Crimspwouohc&shndl=30&source=sh%2Fx%2Floc%2Fosrp%2Fm1%2F2&kgs=a10f07a17213e860";
+      window.location.href = "https://www.google.com/search?q=moka+cafe+-+%E1%88%9E%E1%8A%AB+%E1%8A%AB%E1%8D%8C+reviews&oq=moka+&gs_lcrp=EgZjaHJvbWUqBggDECMYJzIGCAAQRRg7MgYIARBFGDkyBggCEEUYOzIGCAMQIxgnMgYIBBAjGCcyBwgFEAAYgAQyBggGEEUYPTIGCAcQRRg9MgcICBAAGIAEMgcICRAAGIAEMgcIChAuGIAEMgcICxAAGIAEMgcIDBAAGIAEMgcIDRAAGIAEMgcIDHAAGIAE0gEINDQ3NWowajeoAhSwAgHxBekkmNipnOne&client=ms-android-zte-rvo2&sourceid=chrome-mobile&ie=UTF-8#ebo=2";
     }
 
     setPromoMessage('Review posted! Navigating directly to our verified Google Map Spot...');
@@ -254,16 +254,16 @@ function MenuHome() {
             {/* Logo and Greeting */}
             <div className="flex items-center gap-2.5">
               <div 
-                className="w-12 h-12 rounded-full bg-[#231C17] flex items-center justify-center shadow-md border border-[#3A2E24] overflow-hidden cursor-pointer active:scale-95 transition-transform p-0.5"
+                className="w-16 h-16 rounded-2xl bg-[#231C17] flex items-center justify-center shadow-lg border-2 border-[#EA580C]/80 overflow-hidden cursor-pointer active:scale-95 transition-transform p-1.5"
                 onClick={() => setActiveTab('home')}
               >
                 <img
                   src="/brand/moka-logo.png"
                   alt="Moka Cafe"
-                  className="w-full h-full object-contain rounded-full"
+                  className="w-full h-full object-contain rounded-xl"
                 />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col justify-center">
                 <div className="flex items-center gap-1 font-ethiopic font-black text-xl tracking-tight leading-none">
                   <span className="text-[#F5EFE6]">ሞካ</span>
                   <span className="text-[#EA580C]">{am ? 'ካፌ' : 'Cafe'}</span>
@@ -274,14 +274,14 @@ function MenuHome() {
                 </div>
                 <div className="flex items-center mt-1">
                   <a 
-                    href="https://www.google.com/search?kgmid=%2Fg%2F11z5pc764n&hl=en-ET&q=Dagi%20fast%20food"
+                    href="https://www.google.com/search?q=moka+cafe+-+%E1%88%9E%E1%8A%AB+%E1%8A%AB%E1%8D%8C+reviews&oq=moka+&gs_lcrp=EgZjaHJvbWUqBggDECMYJzIGCAAQRRg7MgYIARBFGDkyBggCEEUYOzIGCAMQIxgnMgYIBBAjGCcyBwgFEAAYgAQyBggGEEUYPTIGCAcQRRg9MgcICBAAGIAEMgcICRAAGIAEMgcIChAuGIAEMgcICxAAGIAEMgcIDBAAGIAEMgcIDRAAGIAEMgcIDHAAGIAE0gEINDQ3NWowajeoAhSwAgHxBekkmNipnOne&client=ms-android-zte-rvo2&sourceid=chrome-mobile&ie=UTF-8#ebo=2"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 bg-[#231C17] border border-[#3A2E24] rounded-full px-2.5 py-0.5 text-[8px] font-bold text-[#C9B8A3] shadow-sm hover:scale-105 active:scale-95 transition-transform"
                   >
                     <span className="text-red-600 font-extrabold">G</span>
                     <span className="text-amber-500">★</span>
-                    <span className="text-[#E4D9C8]">4.7 Rating</span>
+                    <span className="text-[#E4D9C8]">4.4 Rating</span>
                   </a>
                 </div>
               </div>
@@ -721,16 +721,16 @@ function MenuHome() {
                       
                       <div className="text-right">
                         <div className="flex items-center gap-1.5 text-amber-500 justify-end">
-                          <span className="text-2xl font-black text-[#F5EFE6] leading-none">4.7</span>
+                          <span className="text-2xl font-black text-[#F5EFE6] leading-none">4.4</span>
                           <div className="flex flex-col text-left">
                             <div className="flex text-amber-500 gap-0.5">
                               <Star size={10} fill="currentColor" className="stroke-none" />
                               <Star size={10} fill="currentColor" className="stroke-none" />
                               <Star size={10} fill="currentColor" className="stroke-none" />
                               <Star size={10} fill="currentColor" className="stroke-none" />
-                              <Star size={10} fill="currentColor" className="stroke-none" />
+                              <Star size={10} fill="none" className="stroke-amber-500 stroke-[2.5]" />
                             </div>
-                            <span className="text-[7.5px] text-neutral-400 font-extrabold tracking-widest uppercase">11 VOTES</span>
+                            <span className="text-[7.5px] text-neutral-400 font-extrabold tracking-widest uppercase">2,298 VOTES</span>
                           </div>
                         </div>
                       </div>
@@ -746,50 +746,50 @@ function MenuHome() {
                       <div className="flex items-center gap-2.5 text-[9.5px]">
                         <span className="text-neutral-400 font-bold w-11 text-right">5 stars</span>
                         <div className="flex-1 h-2.5 bg-[#2A2119] rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full w-[82%]" />
+                          <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full w-[55%]" />
                         </div>
-                        <span className="text-[#E4D9C8] font-bold w-12 text-right">9 reviews</span>
+                        <span className="text-[#E4D9C8] font-bold w-12 text-right">1,264 reviews</span>
                       </div>
 
                       {/* 4 stars */}
                       <div className="flex items-center gap-2.5 text-[9.5px]">
                         <span className="text-neutral-400 font-bold w-11 text-right">4 stars</span>
                         <div className="flex-1 h-2.5 bg-[#2A2119] rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full w-[9%]" />
+                          <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full w-[25%]" />
                         </div>
-                        <span className="text-[#E4D9C8] font-bold w-12 text-right">1 review</span>
+                        <span className="text-[#E4D9C8] font-bold w-12 text-right">574 reviews</span>
                       </div>
 
                       {/* 3 stars */}
                       <div className="flex items-center gap-2.5 text-[9.5px]">
                         <span className="text-neutral-400 font-bold w-11 text-right">3 stars</span>
                         <div className="flex-1 h-2.5 bg-[#2A2119] rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full w-[9%]" />
+                          <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full w-[12%]" />
                         </div>
-                        <span className="text-[#E4D9C8] font-bold w-12 text-right">1 review</span>
+                        <span className="text-[#E4D9C8] font-bold w-12 text-right">276 reviews</span>
                       </div>
 
                       {/* 2 stars */}
                       <div className="flex items-center gap-2.5 text-[9.5px]">
                         <span className="text-neutral-400 font-bold w-11 text-right">2 stars</span>
                         <div className="flex-1 h-2.5 bg-[#2A2119] rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full w-[0%]" />
+                          <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full w-[4%]" />
                         </div>
-                        <span className="text-neutral-400 font-bold w-12 text-right">0 reviews</span>
+                        <span className="text-[#E4D9C8] font-bold w-12 text-right">92 reviews</span>
                       </div>
 
                       {/* 1 star */}
                       <div className="flex items-center gap-2.5 text-[9.5px]">
                         <span className="text-neutral-400 font-bold w-11 text-right">1 star</span>
                         <div className="flex-1 h-2.5 bg-[#2A2119] rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full w-[0%]" />
+                          <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full w-[4%]" />
                         </div>
-                        <span className="text-neutral-400 font-bold w-12 text-right">0 reviews</span>
+                        <span className="text-[#E4D9C8] font-bold w-12 text-right">92 reviews</span>
                       </div>
                     </div>
 
                     <a 
-                      href="https://www.google.com/search?kgmid=%2Fg%2F11z5pc764n&hl=en-ET&q=Dagi%20fast%20food&shem=epsd1%2Cltac%2Crimspwouohc&shndl=30&source=sh%2Fx%2Floc%2Fosrp%2Fm1%2F2&kgs=a10f07a17213e860"
+                      href="https://www.google.com/search?q=moka+cafe+-+%E1%88%9E%E1%8A%AB+%E1%8A%AB%E1%8D%8C+reviews&oq=moka+&gs_lcrp=EgZjaHJvbWUqBggDECMYJzIGCAAQRRg7MgYIARBFGDkyBggCEEUYOzIGCAMQIxgnMgYIBBAjGCcyBwgFEAAYgAQyBggGEEUYPTIGCAcQRRg9MgcICBAAGIAEMgcICRAAGIAEMgcIChAuGIAEMgcICxAAGIAEMgcIDBAAGIAEMgcIDRAAGIAEMgcIDHAAGIAE0gEINDQ3NWowajeoAhSwAgHxBekkmNipnOne&client=ms-android-zte-rvo2&sourceid=chrome-mobile&ie=UTF-8#ebo=2"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full bg-[#1A73E8] hover:bg-[#1557b0] text-white text-[9px] font-black uppercase tracking-widest py-3.5 rounded-xl flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all text-center cursor-pointer"
