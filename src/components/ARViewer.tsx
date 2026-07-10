@@ -353,17 +353,19 @@ export default function ARViewer({ src, poster, alt }: ARViewerProps) {
         src={src}
         ar
         ar-modes="webxr scene-viewer quick-look"
-        ar-scale="fixed"
+        ar-scale="auto"
         ar-placement="floor"
+        quick-look-browsers="safari chrome"
+        environment-image="neutral"
         provide-id
         poster={currentPoster}
         alt={alt}
         camera-controls
         auto-rotate
         auto-rotate-delay="100"
-        shadow-intensity="1.5"
-        exposure="1.0"
-        shadow-softness="0.5"
+        shadow-intensity="2.0"
+        exposure="1.2"
+        shadow-softness="0.3"
         power-preference="high-performance"
         reveal="auto"
         scale={`${scale * baseScale} ${scale * baseScale} ${scale * baseScale}`}
