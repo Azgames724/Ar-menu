@@ -1,6 +1,12 @@
 {
-  "name": "Dagi Fast Food",
-  "description": "An immersive 3D fast food menu experience for Dagi Fast Food. View delicious gourmet wraps, burritos, and refreshing drinks before ordering.",
-  "requestFramePermissions": ["camera"],
+  "name": "Moka Cafe",
+  "description": "An immersive 3D menu experience for Moka Cafe (ሞካ ካፌ). View delicious gourmet burgers, chicken, and pizza before ordering.",
+  "requestFramePermissions": ["camera", "xr-spatial-tracking"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+{
+  "name": "Moka Cafe",
+  "description": "An immersive 3D menu experience for Moka Cafe (ሞካ ካፌ). View delicious gourmet burgers, chicken, and pizza before ordering.",
+  "requestFramePermissions": ["camera", "xr-spatial-tracking"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
