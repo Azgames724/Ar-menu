@@ -1,4 +1,4 @@
-# Dagi Fast Food — Interactive 3D & AR Menu
+# Moka Cafe — Interactive 3D & AR Menu
 
 A React + Express app exported from Google AI Studio. It's an Amharic-language restaurant menu app with interactive 3D model viewing and AR inspection of menu items.
 
